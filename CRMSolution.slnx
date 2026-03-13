@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CRMApi/CRMApi.csproj" Id="827e8304-aa9f-4614-bb21-4379495f6fa5" />
+  <Project Path="CRMModels/CRMModels.csproj" Id="95d2520e-41e4-4615-9fe3-b459bd3c4d6e" />
+  <Project Path="CRMProject/CRMProject.Client/CRMProject.Client.csproj" />
+  <Project Path="CRMProject/CRMProject/CRMProject.csproj" />
+</Solution>
