@@ -1,0 +1,52 @@
+﻿@page "/klanten"
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="flex-grow-1"></div>
+    <h1 class="flex-grow-1 text-center m-0">Klanten</h1>
+    <div class="flex-grow-1 text-end">
+        <a href="/klanten/aanpassen" class="btn btn-success">+</a>
+    </div>
+</div>
+@if(KlantenLijst.Count != 0)
+{
+    <div class="table-hover">
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Naam</th>
+                <th>Email</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(Klant klant in KlantenLijst)
+            {
+            <tr>
+                <td>
+                    @klant.Voornaam @klant.Naam
+                </td>
+                <td>
+                    @klant.EmailAdres
+                </td>
+                <td>
+                    <a>Details</a>
+                    <a>Bewerk</a>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+}
+
+
+@code {
+    [Inject]
+    public KlantenService klantenService { get; set; }
+    List<Klant> KlantenLijst = new List<Klant>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        KlantenLijst = await klantenService.GetKlantenAsync();
+    }
+
+}

@@ -24,10 +24,10 @@ namespace CRM.Models
         [GeboortedatumValidator(ErrorMessage = "{0} moet in het verleden liggen")]
         public DateOnly GeboorteDatum { get; set; }
         [ForeignKey(nameof(AdresId))]
-        public Adres Adres { get; set; }
-        public int AdresId { get; set; }
-        
-        public List<Factuur> Facturen { get; set; }
+        public Adres? Adres { get; set; }
+        public int? AdresId { get; set; }
+
+        public List<Factuur> Facturen { get; set; } = new List<Factuur>();
         public decimal BtwPercentage { get; set; } = 21m;
     }
 }

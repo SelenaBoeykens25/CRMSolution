@@ -1,0 +1,276 @@
+﻿@page "/klanten/aanpassen"
+@page "/klanten/aanpassen/{id:int}"
+@page "/klanten/toevoegen"
+@inject NavigationManager navmanager
+@if (Klant != null)
+{
+    <h1>@(Id == 0 ? "Nieuwe Klant" : "Klant Aanpassen")</h1>
+    <EditForm Model="Klant" OnValidSubmit="UpdateKlant" class="border border-dark rounded p-3">
+        <DataAnnotationsValidator />
+
+        <div class="row">
+            <!-- Left Column: Klant Information -->
+            <div class="col-md-6">
+                <h4 class="mb-3">Klant Gegevens</h4>
+
+                <div class="row my-3">
+                    <label for="aanspreking" class="col-sm-4 col-form-label">
+                        Aanspreking
+                    </label>
+                    <div class="col-sm-8">
+                        <InputSelect @bind-Value="@Klant.Aanspreking" id="aanspreking">
+                            <option value="">- Selecteer aanspreking -</option>
+                            <option value="dhr.">dhr.</option>
+                            <option value="mevr.">mevr.</option>
+                            <option value="x">x</option>
+                        </InputSelect>
+                    </div>
+                </div>
+
+                <div class="row my-3">
+                    <label for="voornaam" class="col-sm-4 col-form-label">
+                        Voornaam
+                    </label>
+                    <div class="col-sm-8">
+                        <InputText id="voornaam" class="form-control" autofocus
+                                   @bind-Value="Klant.Voornaam" />
+                    </div>
+                </div>
+
+                <div class="row my-3">
+                    <label for="naam" class="col-sm-4 col-form-label">
+                        Naam
+                    </label>
+                    <div class="col-sm-8">
+                        <InputText id="naam" class="form-control"
+                                   @bind-Value="Klant.Naam" />
+                    </div>
+                </div>
+
+                <div class="row my-3">
+                    <label for="telefoonnummer" class="col-sm-4 col-form-label">
+                        Telefoonnummer
+                    </label>
+                    <div class="col-sm-8">
+                        <InputText id="telefoonnummer" class="form-control"
+                                   @bind-Value="Klant.TelefoonNummer" />
+                    </div>
+                </div>
+
+                <div class="row my-3">
+                    <label for="emailadres" class="col-sm-4 col-form-label">
+                        Emailadres
+                    </label>
+                    <div class="col-sm-8">
+                        <InputText id="emailadres" class="form-control" type="email"
+                                   @bind-Value="Klant.EmailAdres" />
+                    </div>
+                </div>
+
+                <div class="row my-3">
+                    <label for="geboortedatum" class="col-sm-4 col-form-label">
+                        Geboortedatum
+                    </label>
+                    <div class="col-sm-8">
+                        <InputDate id="geboortedatum" class="form-control"
+                                   @bind-Value="Klant.GeboorteDatum" />
+                    </div>
+                </div>
+
+                <div class="row my-3">
+                    <label for="btwpercentage" class="col-sm-4 col-form-label">
+                        BTW Percentage
+                    </label>
+                    <div class="col-sm-8">
+                        <InputNumber id="btwpercentage" class="form-control"
+                                     @bind-Value="Klant.BtwPercentage" />
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                @if (MetAdres)
+                {
+
+                    <h4 class="mb-3">Adres</h4>
+
+                    <div class="row my-3">
+                        <label for="straat" class="col-sm-4 col-form-label">
+                            Straat
+                        </label>
+                        <div class="col-sm-8">
+                            <InputText id="straat" class="form-control"
+                                       @bind-Value="Klant.Adres.Straat" />
+                        </div>
+                    </div>
+
+                    <div class="row my-3">
+                        <label for="huisnummer" class="col-sm-4 col-form-label">
+                            Huisnummer
+                        </label>
+                        <div class="col-sm-8">
+                            <InputText id="huisnummer" class="form-control"
+                                       @bind-Value="Klant.Adres.HuisNummer" />
+                        </div>
+                    </div>
+
+                    <div class="row my-3">
+                        <label for="busnummer" class="col-sm-4 col-form-label">
+                            Busnummer
+                        </label>
+                        <div class="col-sm-8">
+                            <InputText id="busnummer" class="form-control"
+                                       @bind-Value="Klant.Adres.BusNummer" />
+                        </div>
+                    </div>
+
+                    <div class="row my-3">
+                        <label for="postcode" class="col-sm-4 col-form-label">
+                            Postcode
+                        </label>
+                        <div class="col-sm-8">
+                            <InputText id="postcode" class="form-control"
+                                       @bind-Value="Klant.Adres.Postcode" />
+                        </div>
+                    </div>
+
+                    <div class="row my-3">
+                        <label for="stad" class="col-sm-4 col-form-label">
+                            Stad
+                        </label>
+                        <div class="col-sm-8">
+                            <InputText id="stad" class="form-control"
+                                       @bind-Value="Klant.Adres.Stad" />
+                        </div>
+                    </div>
+
+                    <div class="row my-3">
+                        <label for="gemeente" class="col-sm-4 col-form-label">
+                            Gemeente
+                        </label>
+                        <div class="col-sm-8">
+                            <InputText id="gemeente" class="form-control"
+                                       @bind-Value="Klant.Adres.Gemeente" />
+                        </div>
+                    </div>
+
+                    <div class="row my-3">
+                        @if(MogelijkeLanden != null && !nieuwLand)
+                        {
+                            
+                        <label for="landcode" class="col-sm-4 col-form-label">
+                            Land
+                        </label>
+                        <div class="col-sm-8">
+                            <InputSelect id="landcode" @bind-Value="Klant.Adres.LandCode">
+                                @foreach (Land land in MogelijkeLanden)
+                                {
+                                    <option value="@land.LandCode" >@land.LandNaam</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <button type="button" class="btn btn-primary" @onclick="NieuwLandToevoegen">Nieuw Land</button>
+                        }
+                        else
+                        {
+                            <div class="row my-3">
+                                <label for="nieuwlandcode" class="col-sm-4 col-form-label">
+                                    Landcode
+                                </label>
+                                <div class="col-sm-8">
+                                    <InputText id="nieuwlandcode" class="form-control"
+                                               @bind-Value="Klant.Adres.Land.LandCode" />
+                                </div>
+                            </div>
+                            <div class="row my-3">
+                                <label for="nieuwlandcode" class="col-sm-4 col-form-label">
+                                    Landnaam
+                                </label>
+                                <div class="col-sm-8">
+                                    <InputText id="nieuwlandcode" class="form-control"
+                                               @bind-Value="Klant.Adres.Land.LandNaam" />
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                }
+                else
+                {
+                    <button type="button" class="btn btn-primary" @onclick="VoegAdresToe">Met Adres</button>
+                }
+            </div>
+        </div>
+
+        <div class="row my-3">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Opslaan</button>
+            </div>
+        </div>
+
+        <ValidationSummary />
+    </EditForm>
+}
+@code {
+    public Klant Klant { get; set; } = new Klant();
+    [Inject]
+    public KlantenService _klantenService { get; set; }
+    [Inject]
+    public LandService _landService { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+
+    private bool MetAdres = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != 0)
+        {
+            Klant = await _klantenService.GetKlantAsync(Id);
+            if (Klant.Adres != null)
+            {
+                MetAdres = true;
+                MogelijkeLanden = await _landService.GetLandenAsync();
+            }
+        }
+        else
+        {
+            Klant = new Klant();
+        }
+    }
+
+    private async Task UpdateKlant()
+    {
+        if (nieuwLand)
+        {
+            Klant.Adres.LandCode = Klant.Adres.Land.LandCode;
+        }
+        if (Id != 0)
+        {
+            await _klantenService.UpdateKlant(Klant);
+            navmanager.NavigateTo($"/klanten/{Klant.Id}");
+        }
+        else
+        {
+            await _klantenService.AddKlant(Klant);
+            navmanager.NavigateTo($"/klanten");
+        }
+    }
+    bool nieuwLand = false;
+    List<Land> MogelijkeLanden = new List<Land>();
+
+    private async Task VoegAdresToe()
+    {
+        Klant.Adres = new Adres();
+        MetAdres = true;
+        MogelijkeLanden = await _landService.GetLandenAsync();
+        if (MogelijkeLanden.Any())
+        {
+            Klant.Adres.LandCode = MogelijkeLanden.First().LandCode;
+        }
+    }
+    private async Task NieuwLandToevoegen()
+    {
+        this.Klant.Adres.Land = new Land();
+        nieuwLand = true;
+    }
+}
