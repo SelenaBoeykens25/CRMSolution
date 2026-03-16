@@ -154,22 +154,26 @@
                     </div>
 
                     <div class="row my-3">
-                        @if(MogelijkeLanden != null && !nieuwLand)
+                        @if (MogelijkeLanden != null && !nieuwLand)
                         {
-                            
-                        <label for="landcode" class="col-sm-4 col-form-label">
-                            Land
-                        </label>
-                        <div class="col-sm-8">
-                            <InputSelect id="landcode" @bind-Value="Klant.Adres.LandCode">
-                                @foreach (Land land in MogelijkeLanden)
-                                {
-                                    <option value="@land.LandCode" >@land.LandNaam</option>
-                                }
-                            </InputSelect>
-                        </div>
-                        <button type="button" class="btn btn-primary" @onclick="NieuwLandToevoegen">Nieuw Land</button>
+
+                            <label for="landcode" class="col-sm-4 col-form-label">
+                                Land
+                            </label>
+                            <div class="col-sm-8">
+                                <InputSelect id="landcode" @bind-Value="Klant.Adres.LandCode">
+                                    @foreach (Land land in MogelijkeLanden)
+                                    {
+                                        <option value="@land.LandCode">@land.LandNaam</option>
+                                    }
+                                </InputSelect>
+                            </div>
                         }
+                        @if (!nieuwLand)
+                        {
+                            <button type="button" class="btn btn-primary col-sm-4" @onclick="NieuwLandToevoegen">Nieuw Land</button>
+                        }
+
                         else
                         {
                             <div class="row my-3">
