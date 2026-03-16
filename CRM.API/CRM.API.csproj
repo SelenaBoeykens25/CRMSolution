@@ -16,10 +16,6 @@
 	  </PackageReference>
 	  <PackageReference Include="Scalar.AspNetCore" Version="2.12.44" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
 	
 
   <ItemGroup>

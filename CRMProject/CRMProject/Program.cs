@@ -1,7 +1,13 @@
+using CRMProject.Client.Models;
 using CRMProject.Client.Pages;
 using CRMProject.Components;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddSingleton(
+    new HttpClient { BaseAddress = new Uri("https://localhost:7098") }
+     );
+builder.Services.AddTransient<KlantService>();
+
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

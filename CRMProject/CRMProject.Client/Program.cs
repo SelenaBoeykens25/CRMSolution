@@ -1,5 +1,9 @@
+using CRMProject.Client.Models;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
-
+builder.Services.AddTransient<KlantService>();
+builder.Services.AddSingleton(
+    new HttpClient { BaseAddress = new Uri("https://localhost:7098") }
+     );
 await builder.Build().RunAsync();
