@@ -2,9 +2,22 @@
 @page "/klanten/aanpassen/{id:int}"
 @page "/klanten/toevoegen"
 @inject NavigationManager navmanager
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <button class="btn btn-secondary" @onclick="GaTerug">
+        <span class="bi bi-arrow-left"></span> Terug
+    </button>
+    <h1 class="flex-grow-1 text-center m-0">@(Id == 0 ? "Nieuwe Klant" : "Klant Aanpassen")</h1>
+    
+    @if (Id != 0)
+    {   
+    <a href="/klanten/@Id" class="btn btn-primary">
+        <span class="bi bi-eye"></span> Details
+    </a>
+    }
+</div>
+
 @if (Klant != null)
 {
-    <h1>@(Id == 0 ? "Nieuwe Klant" : "Klant Aanpassen")</h1>
     <EditForm Model="Klant" OnValidSubmit="UpdateKlant" class="border border-dark rounded p-3">
         <DataAnnotationsValidator />
 
@@ -222,6 +235,10 @@
     public LandService _landService { get; set; }
     [Parameter]
     public int Id { get; set; }
+    private void GaTerug()
+    {
+        navmanager.NavigateTo("/klanten");
+    }
 
     private bool MetAdres = false;
 

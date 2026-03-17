@@ -1,0 +1,145 @@
+﻿@page "/klanten/{id:int}"
+@inject NavigationManager navmanager
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <button class="btn btn-secondary" @onclick="GaTerug">
+        <span class="bi bi-arrow-left"></span> Terug
+    </button>
+    <h1 class="flex-grow-1 text-center m-0">Klant Details</h1>
+    <a href="/klanten/aanpassen/@Id" class="btn btn-primary">
+        <span class="bi bi-pencil"></span> Bewerken
+    </a>
+</div>
+
+@if (klant != null)
+{
+    <div class="card mb-3">
+        <div class="card-header">
+            <h4 class="mb-0">Persoonlijke Gegevens</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <strong>Aanspreking:</strong> @klant.Aanspreking
+                </div>
+                <div class="col-md-6 mb-3">
+                    <strong>Naam:</strong> @klant.Voornaam @klant.Naam
+                </div>
+                <div class="col-md-6 mb-3">
+                    <strong>Email:</strong> @klant.EmailAdres
+                </div>
+                <div class="col-md-6 mb-3">
+                    <strong>Telefoon:</strong> @klant.TelefoonNummer
+                </div>
+                <div class="col-md-6 mb-3">
+                    <strong>Geboortedatum:</strong> @klant.GeboorteDatum.ToString("dd/MM/yyyy")
+                </div>
+                <div class="col-md-6 mb-3">
+                    <strong>BTW Percentage:</strong> @klant.BtwPercentage%
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (klant.Adres != null)
+    {
+        <div class="card mb-3">
+            <div class="card-header">
+                <h4 class="mb-0">Adres</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>Straat:</strong> @klant.Adres.Straat @klant.Adres.HuisNummer @klant.Adres.BusNummer
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Postcode:</strong> @klant.Adres.Postcode
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Stad:</strong> @klant.Adres.Stad
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Gemeente:</strong> @klant.Adres.Gemeente
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Land:</strong> @klant.Adres.Land.LandNaam
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <span class="bi bi-info-circle"></span> Geen adres geregistreerd
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <h4 class="mb-0">Facturen</h4>
+        </div>
+        <div class="card-body">
+            @if (klant.Facturen != null && klant.Facturen.Count > 0)
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Factuurnummer</th>
+                                <th>Datum</th>
+                                <th>Bedrag</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var factuur in klant.Facturen)
+                            {
+                                <tr>
+                                    <td>@factuur.Id</td>
+                                    <td>@factuur.FactuurDatum.ToString("dd/MM/yyyy")</td>
+                                    <td>€ @factuur.Prijs.ToString("F2")</td>
+                                    <td>@factuur.BetaalStatus</td>
+                                    <td>
+                                        <a href="/facturen/@factuur.Id" class="text-decoration-none" title="Details">
+                                            <span class="bi bi-eye"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mb-0">Geen facturen gevonden voor deze klant.</p>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <p>Laden...</p>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    [Inject]
+    public KlantenService _klantenService { get; set; }
+
+    public Klant? klant { get; set; }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        klant = await _klantenService.GetKlantAsync(Id);
+    }
+
+    private void GaTerug()
+    {
+        navmanager.NavigateTo("/klanten");
+    }
+}
