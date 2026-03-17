@@ -105,5 +105,18 @@ namespace CRM.API.Repo
             }
             return null;
         }
+
+        public async Task<Klant> DeleteKlant(int KlantId)
+        {
+            var result = await _context.Klanten
+                .FirstOrDefaultAsync(c => c.Id == KlantId);
+            if (result != null)
+            {
+                _context.Klanten.Remove(result);
+                await _context.SaveChangesAsync();
+                return result;
+            }
+            return null;
+        }
     }
 }

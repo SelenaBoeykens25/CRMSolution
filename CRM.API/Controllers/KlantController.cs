@@ -75,5 +75,24 @@ namespace CRM.API.Controllers
                    "Error updating data");
             }
         }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<Klant>> DeleteKlant(int id)
+        {
+            try
+            {
+                var contactToDelete = await _repository.GetKlantAsync(id);
+
+                if (contactToDelete == null)
+                    return NotFound($"Klant with id = {id} is not found");
+
+                return await _repository.DeleteKlant(id);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Error deleting data");
+            }
+        }
     }
 }

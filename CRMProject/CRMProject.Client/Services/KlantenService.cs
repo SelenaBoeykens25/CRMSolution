@@ -55,5 +55,10 @@ namespace CRMProject.Client.Services
             else
                 return null;
         }
+
+        public async Task DeleteKlant(int id)
+        {
+            await httpClient.DeleteAsync($"klant/{id}");
+        }
     }
 }

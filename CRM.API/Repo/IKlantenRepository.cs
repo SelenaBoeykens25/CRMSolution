@@ -8,5 +8,6 @@ namespace CRM.API.Repo
         Task<Klant?> GetKlantAsync(string naam);
         Task<Klant> AddKlantAsync(Klant klant);
         Task<Klant> UpdateKlantAsync(Klant klant);
+        Task<Klant> DeleteKlant(int KlantId);
     }
 }

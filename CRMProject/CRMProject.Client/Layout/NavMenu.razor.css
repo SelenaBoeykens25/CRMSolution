@@ -16,7 +16,7 @@
     color: white !important;
 }
 
-.bi {
+.nav-item .bi {
     display: inline-block;
     position: relative;
     width: 1.25rem;

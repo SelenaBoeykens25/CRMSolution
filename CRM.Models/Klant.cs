@@ -2,6 +2,7 @@
 using CRM.Models.Validators;
 using CRM.Models.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace CRM.Models
 {
@@ -27,6 +28,7 @@ namespace CRM.Models
         public Adres? Adres { get; set; }
         public int? AdresId { get; set; }
 
+        [JsonIgnore]
         public List<Factuur> Facturen { get; set; } = new List<Factuur>();
         public decimal BtwPercentage { get; set; } = 21m;
     }
