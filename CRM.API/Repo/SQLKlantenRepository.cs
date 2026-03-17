@@ -13,7 +13,7 @@ namespace CRM.API.Repo
 
         public async Task<IEnumerable<Klant>> GetKlantenAsync()
         {
-            return await _context.Klanten.ToListAsync();
+            return await _context.Klanten.Include(klant=>klant.Adres).OrderBy(klant=>klant.Voornaam).ToListAsync();
         }
 
         public async Task<Klant?> GetKlantAsync(int id)

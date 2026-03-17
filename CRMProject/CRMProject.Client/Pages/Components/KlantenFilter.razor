@@ -1,0 +1,54 @@
+<EditForm OnSubmit="HandleFilter" Model="filterVariabele" class="d-flex gap-2">
+    <InputText @bind-Value="filterVariabele.filter" autofocus />
+    <InputSelect @bind-Value="filterVariabele.filterOp">
+        <option Value="@("Naam")">Naam</option>
+        <option Value="@("Email")">Email</option>
+        <option Value="@("Telefoon")">Telefoon</option>
+        <option Value="@("Adres")">Adres</option>
+    </InputSelect>
+    <button type="submit" class="btn btn-primary"><span class="bi bi-search"></span> Filter</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public List<Klant> KlantenLijst { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<List<Klant>> OnFilterChanged { get; set; }
+
+    private class FilterModel
+    {
+        public string filter { get; set; } = "";
+        public string filterOp { get; set; } = "Naam";
+    }
+
+    private FilterModel filterVariabele = new FilterModel();
+
+    private async Task HandleFilter()
+    {
+        List<Klant> filteredList;
+
+        if (!string.IsNullOrEmpty(filterVariabele.filter))
+        {
+            filteredList = filterVariabele.filterOp switch
+            {
+                "Naam" => KlantenLijst.Where(klant =>
+                    ($"{klant.Voornaam.ToLower()} {klant.Naam.ToLower()}").Contains(filterVariabele.filter.ToLower())).ToList(),
+                "Email" => KlantenLijst.Where(klant =>
+                    klant.EmailAdres.Contains(filterVariabele.filter.ToLower())).ToList(),
+                "Telefoon" => KlantenLijst.Where(klant =>
+                    klant.TelefoonNummer.Contains(filterVariabele.filter.ToLower())).ToList(),
+                "Adres" => KlantenLijst.Where(klant =>
+                    (klant.Adres != null) &&
+                    ($"{(klant.Adres.Straat ?? "").ToLower()} {(klant.Adres.HuisNummer ?? "").ToLower()} {(klant.Adres.BusNummer ?? "").ToLower()} {(klant.Adres.Stad ?? "").ToLower()}").Contains(filterVariabele.filter.ToLower())).ToList(),
+                _ => KlantenLijst
+            };
+        }
+        else
+        {
+            filteredList = KlantenLijst;
+        }
+
+        await OnFilterChanged.InvokeAsync(filteredList);
+    }
+}
