@@ -11,8 +11,7 @@
     <div style="flex: 1 1 0; min-width: 0;" class="text-end">
         @if (KlantenLijst != null)
         {
-            @if (!firstRender)
-            {
+            
 
                 @if (KlantenLijst.Count == FilterLijst.Count)
                 {
@@ -22,7 +21,7 @@
                 {
                     <span class="me-2">@FilterLijst.Count/@KlantenLijst.Count Klanten</span>
                 }
-            }
+            
         }
 
 
