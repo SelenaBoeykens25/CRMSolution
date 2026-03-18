@@ -26,11 +26,6 @@ namespace CRM.API.Models
                 .Property(f => f.Prijs)
                 .HasPrecision(18, 2);
 
-           
-            modelBuilder.Entity<Klant>()
-                .Property(k => k.BtwPercentage)
-                .HasPrecision(5, 2);
-
             
             modelBuilder.Entity<Klant>()
                 .HasOne(k => k.Adres)

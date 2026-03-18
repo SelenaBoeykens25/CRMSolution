@@ -9,10 +9,10 @@
     <h1 class="flex-grow-1 text-center m-0">@(Id == 0 ? "Nieuwe Klant" : "Klant Aanpassen")</h1>
     
     @if (Id != 0)
-    {   
-    <a href="/klanten/@Id" class="btn btn-primary">
-        <span class="bi bi-eye"></span> Details
-    </a>
+    {
+        <a href="/klanten/@Id" class="btn btn-primary">
+            <span class="bi bi-eye"></span> Details
+        </a>
     }
 </div>
 
@@ -22,7 +22,6 @@
         <DataAnnotationsValidator />
 
         <div class="row">
-            <!-- Left Column: Klant Information -->
             <div class="col-md-6">
                 <h4 class="mb-3">Klant Gegevens</h4>
 
@@ -87,16 +86,6 @@
                     <div class="col-sm-8">
                         <InputDate id="geboortedatum" class="form-control"
                                    @bind-Value="Klant.GeboorteDatum" />
-                    </div>
-                </div>
-
-                <div class="row my-3">
-                    <label for="btwpercentage" class="col-sm-4 col-form-label">
-                        BTW Percentage
-                    </label>
-                    <div class="col-sm-8">
-                        <InputNumber id="btwpercentage" class="form-control"
-                                     @bind-Value="Klant.BtwPercentage" />
                     </div>
                 </div>
             </div>

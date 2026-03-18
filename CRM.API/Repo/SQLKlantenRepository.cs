@@ -34,21 +34,18 @@ namespace CRM.API.Repo
         {
             if (klant.Adres != null)
             {
-                // Handle new land creation if provided
                 if (klant.Adres.Land != null && !string.IsNullOrEmpty(klant.Adres.Land.LandCode))
                 {
-                    var existingLand = await _context.Landen
+                    var bestaandLand = await _context.Landen
                         .FirstOrDefaultAsync(l => l.LandCode == klant.Adres.Land.LandCode);
 
-                    if (existingLand != null)
+                    if (bestaandLand != null)
                     {
-                        klant.Adres.Land = existingLand;
+                        klant.Adres.Land = bestaandLand;
                     }
 
                     klant.Adres.LandCode = klant.Adres.Land.LandCode;
                 }
-
-                // Clear Land navigation property to avoid tracking issues
                 klant.Adres.Land = null;
             }
 
@@ -65,13 +62,7 @@ namespace CRM.API.Repo
 
             if (result != null)
             {
-                result.Voornaam = klant.Voornaam;
-                result.Naam = klant.Naam;
-                result.Aanspreking = klant.Aanspreking;
-                result.BtwPercentage = klant.BtwPercentage;
-                result.TelefoonNummer = klant.TelefoonNummer;
-                result.EmailAdres = klant.EmailAdres;
-                result.GeboorteDatum = klant.GeboorteDatum;
+                _context.Entry(result).CurrentValues.SetValues(klant);
 
                 // Handle address updates
                 if (klant.Adres != null)

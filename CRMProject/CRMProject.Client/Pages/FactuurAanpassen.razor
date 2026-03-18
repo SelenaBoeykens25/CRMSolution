@@ -1,0 +1,285 @@
+﻿@page "/facturen/aanpassen"
+@page "/facturen/toevoegen"
+@page "/facturen/aanpassen/{id:int}"
+@inject NavigationManager navmanager
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <button class="btn btn-secondary" @onclick="GaTerug">
+        <span class="bi bi-arrow-left"></span> Terug
+    </button>
+    <h1 class="flex-grow-1 text-center m-0">@(Id == 0 ? "Nieuwe Factuur" : "Factuur Aanpassen")</h1>
+    
+    @if (Id != 0)
+    {
+        <a href="/facturen/@Id" class="btn btn-primary">
+            <span class="bi bi-eye"></span> Details
+        </a>
+    }
+</div>
+
+<div class="row">
+    <EditForm Model="factuur" OnValidSubmit="UpdateFactuur" class="border border-dark rounded p-3">
+        <DataAnnotationsValidator />
+        <div class="row my-3">
+            <label for="klant" class="col-sm-4 col-form-label">
+                Klant
+            </label>
+            <div class="col-sm-8">
+                @if (MogelijkeKlanten != null)
+                {
+                    <div class="searchable-dropdown">
+                        <input type="text"
+                               id="klant"
+                               class="form-control"
+                               @bind="DropdownFilter"
+                               @bind:event="oninput"
+                               @onfocus="ShowDropdown"
+                               @onblur="HideDropdownDelayed"
+                               placeholder=@(string.IsNullOrEmpty(SelectedKlantNaam) ? "Selecteer Klant.." : $"{SelectedKlantNaam}")
+                               autocomplete="off" />
+                        @if (showDropdown && GefilterdeKlanten.Any())
+                        {
+                            <div class="dropdown-list">
+                                @foreach (Klant klant in GefilterdeKlanten)
+                                {
+                                    <div class="dropdown-item" @onmousedown="() => SelectKlant(klant)">
+                                        @klant.Voornaam @klant.Naam
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+
+
+        <div class="row my-3">
+            <label for="beschrijving" class="col-sm-4 col-form-label">
+                Beschrijving
+            </label>
+            <div class="col-sm-8">
+                <InputText id="beschrijving" class="form-control"
+                           @bind-Value="factuur.Beschrijving" />
+            </div>
+        </div>
+        <div class="row my-3">
+            <label for="prijs" class="col-sm-4 col-form-label">
+                Prijs
+            </label>
+            <div class="col-sm-8">
+                <InputNumber id="prijs" class="form-control"
+                             @bind-Value="factuur.Prijs" />
+            </div>
+        </div>
+        <div class="row my-3">
+            <label for="factuurdatum" class="col-sm-4 col-form-label">
+                Aanmaakdatum
+            </label>
+            <div class="col-sm-8">
+                <InputDate id="factuurdatum" class="form-control"
+                           @bind-Value="factuur.FactuurDatum" />
+            </div>
+        </div>
+        <div class="row my-3">
+            <label for="factuurdatum" class="col-sm-4 col-form-label">
+                Betalen voor
+            </label>
+            <div class="col-sm-8">
+                <InputDate id="factuurdatum" class="form-control"
+                           @bind-Value="factuur.TeBetalenVoor" />
+            </div>
+        </div>
+        <div class="row my-3">
+            <label for="status" class="col-sm-4 col-form-label">
+                Status
+            </label>
+            <div class="col-sm-8">
+                <InputSelect id="status"
+                             @bind-Value="factuur.BetaalStatus">
+                    <option value="">- Selecteer status -</option>
+                    @foreach (var statusoptie in Enum.GetValues(typeof(CRM.Models.Enums.BetaalStatus)))
+                    {
+                        <option value="@statusoptie">@statusoptie</option>
+                    }
+                </InputSelect>
+            </div>
+        </div>
+
+        @if (factuur.FactuurLijnen != null)
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Omschrijving</th>
+                        <th>Prijs zonder BTW</th>
+                        <th>BTW Percantage</th>
+                        <th>Prijs Met BTW</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (FactuurLijn lijn in factuur.FactuurLijnen)
+                    {
+                        <tr>
+                            <td>
+                                <InputText @bind-Value="lijn.Omschrijving"/>
+                            </td>
+                            <td>
+                                <InputNumber @bind-Value="lijn.NettoPrijs" @oninput="@(() => OnNettoPrijsChanged(lijn))"/>
+                            </td>
+                            <td>
+                                <InputNumber @bind-Value="lijn.BtwPercentage" @oninput="@(() => OnBTWChanged(lijn))" />
+                            </td>
+                            <td>
+                                <InputNumber @bind-Value="lijn.BrutoPrijs" @oninput="@(() => OnBrutoPrijsChanged(lijn))" />
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        <button type="button" @onclick="NieuweFactuurLijn" class="btn btn-secondary">Voeg Factuurlijn toe</button>
+
+
+        <div class="row my-3">
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Opslaan</button>
+            </div>
+        </div>
+    </EditForm>
+
+
+
+</div>
+
+@code {
+    public Factuur factuur { get; set; } = new Factuur();
+    [Inject]
+    public FactuurService _factuurService { get; set; }
+    [Inject]
+    public KlantenService _klantenService { get; set; }
+    [Parameter]
+    public int Id { get; set; }
+    private FactuurLijn? FactuurLijn = null;
+    public List<Klant> MogelijkeKlanten { get; set; }
+    public List<Klant> GefilterdeKlanten { get; set; }
+    private bool showDropdown = false;
+    private string SelectedKlantNaam = "";
+
+    private string _dropdownFilter = "";
+    public string DropdownFilter
+    {
+        get => _dropdownFilter;
+        set
+        {
+            _dropdownFilter = value;
+            FilterKlanten();
+        }
+    }
+
+    public void FilterKlanten()
+    {
+        if (string.IsNullOrWhiteSpace(DropdownFilter))
+        {
+            GefilterdeKlanten = MogelijkeKlanten;
+        }
+        else
+        {
+            GefilterdeKlanten = MogelijkeKlanten
+                .Where(klant => ($"{klant.Voornaam} {klant.Naam}".ToLower())
+                .Contains(DropdownFilter.ToLower()))
+                .ToList();
+        }
+    }
+
+    private void ShowDropdown()
+    {
+        showDropdown = true;
+        FilterKlanten();
+    }
+
+    private async Task HideDropdownDelayed()
+    {
+        await Task.Delay(200);
+        showDropdown = false;
+    }
+
+    private void SelectKlant(Klant klant)
+    {
+        factuur.KlantId = klant.Id;
+        SelectedKlantNaam = $"{klant.Voornaam} {klant.Naam}";
+        DropdownFilter = "";
+        showDropdown = false;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id != 0)
+        {
+            factuur = await _factuurService.GetFactuurAsync(Id);
+            if (factuur.KlantId > 0 && MogelijkeKlanten != null)
+            {
+                var selectedKlant = MogelijkeKlanten.FirstOrDefault(k => k.Id == factuur.KlantId);
+                if (selectedKlant != null)
+                {
+                    SelectedKlantNaam = $"{selectedKlant.Voornaam} {selectedKlant.Naam}";
+                }
+            }
+        }
+        else
+        {
+            factuur = new Factuur();
+        }
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        MogelijkeKlanten = await _klantenService.GetKlantenAsync();
+        GefilterdeKlanten = MogelijkeKlanten;
+    }
+
+    private async Task UpdateFactuur()
+    {
+        if (Id != 0)
+        {
+            await _factuurService.UpdateFactuur(factuur);
+            navmanager.NavigateTo($"/facturen/{factuur.Id}");
+        }
+        else
+        {
+            factuur.FactuurLijnen = null;
+            var result = await _factuurService.AddFactuur(factuur);
+
+            if (result != null)
+            {
+                navmanager.NavigateTo($"/facturen");
+            }
+        }
+    }
+    public async Task NieuweFactuurLijn()
+    {
+        if (factuur.FactuurLijnen != null)
+        {
+            factuur.FactuurLijnen.Add(new FactuurLijn());
+        }
+    }
+    public void GaTerug()
+    {
+        navmanager.NavigateTo("/facturen");
+    }
+
+    private void OnNettoPrijsChanged(FactuurLijn lijn)
+    {
+        lijn.BrutoPrijs = Math.Round(lijn.NettoPrijs * (1 + (lijn.BtwPercentage / 100)), 2);
+    }
+    private void OnBTWChanged(FactuurLijn lijn)
+    {
+        lijn.BrutoPrijs = Math.Round(lijn.NettoPrijs * (1 + (lijn.BtwPercentage / 100)), 2);
+    }
+    private void OnBrutoPrijsChanged(FactuurLijn lijn)
+    {
+        lijn.NettoPrijs = Math.Round(lijn.BrutoPrijs / (1 + (lijn.BtwPercentage / 100)), 2);
+    }
+}

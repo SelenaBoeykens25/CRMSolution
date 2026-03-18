@@ -10,8 +10,10 @@ namespace CRM.Models
         public int Id { get; set; }
         public int FactuurId { get; set; }
         [ForeignKey(nameof(FactuurId))]
-        public Factuur Factuur { get; set; }
+        public Factuur? Factuur { get; set; }
         public string Omschrijving { get; set; }
-        public decimal Prijs { get; set; }
+        public decimal NettoPrijs { get; set; }
+        public decimal BtwPercentage { get; set; }
+        public decimal BrutoPrijs { get; set; }
     }
 }

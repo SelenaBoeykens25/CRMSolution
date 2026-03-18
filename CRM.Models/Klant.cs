@@ -28,8 +28,6 @@ namespace CRM.Models
         public Adres? Adres { get; set; }
         public int? AdresId { get; set; }
 
-        [JsonIgnore]
         public List<Factuur> Facturen { get; set; } = new List<Factuur>();
-        public decimal BtwPercentage { get; set; } = 21m;
     }
 }

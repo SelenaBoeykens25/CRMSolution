@@ -16,6 +16,7 @@ builder.Services.AddCors();
 builder.Services.AddDbContext<KlantenDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("KlantenConnection")));
 builder.Services.AddScoped<IKlantenRepository, SQLKlantenRepository>();
+builder.Services.AddScoped<IFactuurRepository, SQLFactuurRepository>();
 builder.Services.AddScoped<ILandRepository, SQLLandRepository>();
 
 builder.Services.AddOpenApi();

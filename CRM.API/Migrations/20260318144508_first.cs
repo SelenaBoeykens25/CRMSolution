@@ -78,8 +78,7 @@ namespace CRM.API.Migrations
                     TelefoonNummer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EmailAdres = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GeboorteDatum = table.Column<DateOnly>(type: "date", nullable: false),
-                    AdresId = table.Column<int>(type: "int", nullable: true),
-                    BtwPercentage = table.Column<decimal>(type: "decimal(5,2)", precision: 5, scale: 2, nullable: false)
+                    AdresId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -124,7 +123,9 @@ namespace CRM.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FactuurId = table.Column<int>(type: "int", nullable: false),
                     Omschrijving = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Prijs = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    NettoPrijs = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    BtwPercentage = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    BrutoPrijs = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {

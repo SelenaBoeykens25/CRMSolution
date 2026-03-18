@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRM.API.Migrations
 {
     [DbContext(typeof(KlantenDbContext))]
-    [Migration("20260318080221_first")]
+    [Migration("20260318144508_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -109,15 +109,21 @@ namespace CRM.API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("BrutoPrijs")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("BtwPercentage")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("FactuurId")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("NettoPrijs")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Omschrijving")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Prijs")
-                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
@@ -193,10 +199,6 @@ namespace CRM.API.Migrations
 
                     b.Property<int?>("AdresId")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("BtwPercentage")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
 
                     b.Property<string>("EmailAdres")
                         .IsRequired()

@@ -12,13 +12,12 @@ namespace CRM.Models
         public int Id { get; set; }
         public int KlantId { get; set; }
         [ForeignKey(nameof(KlantId))]
-        [JsonIgnore]
-        public Klant Klant { get; set; }
-        public DateOnly FactuurDatum { get; set; }
-        public DateOnly TeBetalenVoor { get; set; }
+        public Klant? Klant { get; set; }
+        public DateOnly FactuurDatum { get; set; } = DateOnly.FromDateTime(DateTime.Now);
+        public DateOnly TeBetalenVoor { get; set; } = DateOnly.FromDateTime(DateTime.Now);
         public decimal Prijs { get; set; }
-        public string Beschrijving { get; set; }
-        public BetaalStatus BetaalStatus { get; set; }
-        public List<FactuurLijn> FactuurLijnen { get; set; }
+        public string Beschrijving { get; set; } = "";
+        public BetaalStatus BetaalStatus { get; set; } = BetaalStatus.Openstaand;
+        public List<FactuurLijn>? FactuurLijnen { get; set; } = new List<FactuurLijn>();
     }
 }

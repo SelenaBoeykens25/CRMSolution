@@ -8,6 +8,7 @@ builder.Services.AddSingleton(
      );
 builder.Services.AddTransient<KlantenService>();
 builder.Services.AddTransient<LandService>();
+builder.Services.AddTransient<FactuurService>();
 
 
 // Add services to the container.

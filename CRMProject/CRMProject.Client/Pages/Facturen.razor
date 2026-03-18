@@ -1,0 +1,66 @@
+﻿@page "/facturen"
+@inject NavigationManager navmanger
+@using CRMProject.Client.Pages.Components
+<div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h1 style="flex: 1 1 0; min-width: 0;" class="text-center m-0">Facturen</h1>
+    <div style="flex: 1 1 0; min-width: 0;" class="text-end">
+        @if (FactuurLijst != null)
+        {
+            @if (FactuurLijst.Count == FilterLijst.Count)
+            {
+                <span class="me-2">@FactuurLijst.Count Facturen</span>
+            }
+            else
+            {
+                <span class="me-2">@FilterLijst.Count/@FactuurLijst.Count Facturen</span>
+            }
+            
+        }
+
+
+        <a href="/facturen/aanpassen" class="btn btn-success">
+            <span class="bi bi-file-earmark-diff" aria-hidden="true"></span> Nieuwe Factuur
+        </a>
+    </div>
+</div>
+@if (FactuurLijst.Count != 0)
+{
+    <FactuurTable FilterLijst="FilterLijst" />
+}
+else if (!firstRender)
+{
+    <p>Laden...</p>
+}
+else
+{
+    <p class="text-danger">Er zijn geen Facturen gevonden!</p>
+}
+
+
+
+@code {
+    List<Factuur> FacturenLijst = new List<Factuur>();
+
+    [Inject]
+    public FactuurService factuurService { get; set; }
+    List<Factuur> FactuurLijst = new List<Factuur>();
+    List<Factuur> FilterLijst = new List<Factuur>();
+    bool firstRender = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        FactuurLijst = await factuurService.GetFacturenAsync();
+        FilterLijst = FactuurLijst;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        this.firstRender = firstRender;
+    }
+
+    private void HandleFilterChanged(List<Factuur> filteredList)
+    {
+        FilterLijst = filteredList;
+    }
+}
