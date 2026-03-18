@@ -14,37 +14,43 @@ namespace CRM.API.Models
         public DbSet<Adres> Adressen { get; set; }
         public DbSet<Land> Landen { get; set; }
         public DbSet<Factuur> Facturen { get; set; }
+        public DbSet<FactuurLijn> FactuurLijnen { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Configure decimal precision for Factuur.Prijs
+            
             modelBuilder.Entity<Factuur>()
                 .Property(f => f.Prijs)
                 .HasPrecision(18, 2);
 
-            // Configure decimal precision for Klant.BtwPercentage
+           
             modelBuilder.Entity<Klant>()
                 .Property(k => k.BtwPercentage)
                 .HasPrecision(5, 2);
 
-            // Configure Klant -> Adres relationship (optional)
+            
             modelBuilder.Entity<Klant>()
                 .HasOne(k => k.Adres)
                 .WithMany()
                 .HasForeignKey(k => k.AdresId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // Configure Adres -> Land relationship
+           
             modelBuilder.Entity<Adres>()
                 .HasOne(a => a.Land)
                 .WithMany()
                 .HasForeignKey(a => a.LandCode)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Seed data for GebruikersAccount
+            modelBuilder.Entity<Factuur>().HasMany(a => a.FactuurLijnen)
+                .WithOne(a => a.Factuur)
+                .HasForeignKey(a => a.FactuurId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
             modelBuilder.Entity<GebruikersAccount>().HasData(
                 new GebruikersAccount
                 {
@@ -68,6 +74,15 @@ namespace CRM.API.Models
                     SecurityLevel = SecurityLevel.User
                 }
             );
+
+            modelBuilder.Entity<Land>().HasData(
+                    new Land { LandCode = "BE", LandNaam = "België" },
+                    new Land { LandCode = "FR", LandNaam = "Frankrijk" },
+                    new Land { LandCode = "NL", LandNaam = "Nederland" },
+                    new Land { LandCode = "DE", LandNaam = "Duitsland" },
+                    new Land { LandCode = "EN", LandNaam = "Engeland" }
+
+                );
         }
 
 

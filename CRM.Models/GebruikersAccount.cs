@@ -14,7 +14,7 @@ namespace CRM.Models
         [DataType(DataType.Password)]
         [Required(ErrorMessage ="{0} is een verplicht veld!")]
         public string Wachtwoord { get;set; }
-        public DateOnly AanmaakDatum { get; set; } = new DateOnly();
+        public DateOnly AanmaakDatum { get; set; } = DateOnly.FromDateTime(DateTime.Now);
         public SecurityLevel SecurityLevel { get; set; } = SecurityLevel.User;
     }
 }

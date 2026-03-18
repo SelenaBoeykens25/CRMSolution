@@ -19,5 +19,6 @@ namespace CRM.Models
         public decimal Prijs { get; set; }
         public string Beschrijving { get; set; }
         public BetaalStatus BetaalStatus { get; set; }
+        public List<FactuurLijn> FactuurLijnen { get; set; }
     }
 }
