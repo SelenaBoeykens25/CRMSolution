@@ -1,0 +1,129 @@
+﻿<EditForm OnSubmit="HandleFilter" Model="filterVariabele" class="d-flex gap-2 align-items-center">
+    @if (filterVariabele.filterOp == "Nummer" || filterVariabele.filterOp == "Aantal" || filterVariabele.filterOp == "Prijs")
+    {
+        @if (filterVariabele.filterOp == "Nummer")
+        {
+            <InputNumber @bind-Value="filterVariabele.filterNummer" class="form-control" style="width: 200px;" placeholder="nummer" />
+        }
+        else if (filterVariabele.filterOp == "Prijs")
+        {
+            <InputNumber @bind-Value="filterVariabele.filterNummer" class="form-control" style="width: 200px;" placeholder="prijs" />
+        }
+        else
+        {
+            <InputNumber @bind-Value="filterVariabele.filterNummer" class="form-control" style="width: 200px;" placeholder="aantal" />
+        }
+        <InputSelect @bind-Value="filterVariabele.vergelijkingsOperator" class="form-select" style="width: 200px;">
+            <option Value="@("=")">=</option>
+            <option Value="@(">")">&gt;</option>
+            <option Value="@("<")">&lt;</option>
+        </InputSelect>
+    }
+    else if (filterVariabele.filterOp == "Klant")
+    {   
+        <InputText @bind-Value="filterVariabele.filter" class="form-control" style="width: 400px;" autofocus />
+    }
+    else
+    {
+        <InputSelect @bind-Value="filterVariabele.filterDatumSoort" class="form-select">
+            <option Value="@("Dag")">Dag</option>
+            <option Value="@("Maand")">Maand</option>
+            <option Value="@("Jaar")">Jaar</option>
+        </InputSelect>
+        @if(filterVariabele.filterDatumSoort == "Dag")
+        {   
+        <InputDate @bind-Value="filterVariabele.filterDag" class="form-control"></InputDate>
+        }
+        @if (filterVariabele.filterDatumSoort == "Jaar" || filterVariabele.filterDatumSoort == "Maand")
+        {
+            @if(filterVariabele.filterDatumSoort == "Maand")
+            {
+                <InputNumber placeholder="maand" min="1" max="12" @bind-Value="filterVariabele.filterMaand" class="form-control" style="max-width: 120px;"></InputNumber>
+            }
+
+            <InputNumber placeholder="jaar" @bind-Value="filterVariabele.filterJaar" class="form-control" style="max-width: 120px;"></InputNumber>
+        }
+    }
+    <InputSelect @bind-Value="filterVariabele.filterOp" class="form-select" style="width: 150px;">
+        <option Value="@("Nummer")">Nummer</option>
+        <option Value="@("Klant")">Klant</option>
+        <option Value="@("Datum")">Datum</option>
+        <option Value="@("TBV")">Betalen Voor</option>
+        <option Value="@("Aantal")">Aantal Lijnen</option>
+        <option Value="@("Prijs")">Prijs</option>
+    </InputSelect>
+    <button type="submit" class="btn btn-primary flex-shrink-0"><span class="bi bi-search"></span> Filter</button>
+</EditForm>
+
+@code {
+    [Parameter]
+    public List<Factuur> FactuurLijst { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<List<Factuur>> OnFilterChanged { get; set; }
+
+    private class FilterModel
+    {
+        public string filter { get; set; } = "";
+        public string filterOp { get; set; } = "Klant";
+        public string filterDatumSoort { get; set; } = "Dag";
+        public int filterJaar { get; set; } = DateTime.Today.Year;
+        public int filterMaand { get; set; } = DateTime.Today.Month;
+        public DateOnly filterDag { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+        public string vergelijkingsOperator { get; set; } = "=";
+        public decimal filterNummer { get; set; }
+    }
+
+    private FilterModel filterVariabele = new FilterModel();
+
+    private async Task HandleFilter()
+    {
+        List<Factuur> filteredList = filterVariabele.filterOp switch
+        {
+            "Nummer" => ApplyNumericFilter(FactuurLijst, f => f.Id, filterVariabele.filterNummer, filterVariabele.vergelijkingsOperator),
+            "Klant" => !string.IsNullOrEmpty(filterVariabele.filter)
+                ? FactuurLijst.Where(factuur =>
+                    ($"{factuur.Klant.Voornaam.ToLower()} {factuur.Klant.Naam.ToLower()}").Contains(filterVariabele.filter.ToLower())).ToList()
+                : FactuurLijst,
+            "Datum" => filterVariabele.filterDatumSoort switch
+            {
+                "Dag" => FactuurLijst.Where(f => 
+                    f.FactuurDatum == filterVariabele.filterDag).ToList(),
+                "Maand" => FactuurLijst.Where(f => 
+                    f.FactuurDatum.Month == filterVariabele.filterMaand && 
+                    f.FactuurDatum.Year == filterVariabele.filterJaar).ToList(),
+                "Jaar" => FactuurLijst.Where(f => 
+                    f.FactuurDatum.Year == filterVariabele.filterJaar).ToList(),
+                _ => FactuurLijst
+            },
+            "TBV" => filterVariabele.filterDatumSoort switch
+            {
+                "Dag" => FactuurLijst.Where(f =>
+                    f.TeBetalenVoor == filterVariabele.filterDag).ToList(),
+                "Maand" => FactuurLijst.Where(f =>
+                    f.TeBetalenVoor.Month == filterVariabele.filterMaand &&
+                    f.TeBetalenVoor.Year == filterVariabele.filterJaar).ToList(),
+                "Jaar" => FactuurLijst.Where(f =>
+                    f.TeBetalenVoor.Year == filterVariabele.filterJaar).ToList(),
+                _ => FactuurLijst
+            },
+            "Aantal" => ApplyNumericFilter(FactuurLijst, f => f.FactuurLijnen.Count, filterVariabele.filterNummer, filterVariabele.vergelijkingsOperator),
+            "Prijs" => ApplyNumericFilter(FactuurLijst, f => f.Prijs, filterVariabele.filterNummer, filterVariabele.vergelijkingsOperator),
+            _ => FactuurLijst
+        };
+
+        await OnFilterChanged.InvokeAsync(filteredList);
+    }
+
+    private List<Factuur> ApplyNumericFilter<T>(List<Factuur> list, Func<Factuur, T> selector, T filterValue, string operatorSymbol) 
+        where T : IComparable<T>
+    {
+        return operatorSymbol switch
+        {
+            "=" => list.Where(f => selector(f).CompareTo(filterValue) == 0).ToList(),
+            ">" => list.Where(f => selector(f).CompareTo(filterValue) > 0).ToList(),
+            "<" => list.Where(f => selector(f).CompareTo(filterValue) < 0).ToList(),
+            _ => list
+        };
+    }
+}

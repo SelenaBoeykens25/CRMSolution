@@ -11,20 +11,20 @@
     <div style="flex: 1 1 0; min-width: 0;" class="text-end">
         @if (KlantenLijst != null)
         {
-            
-
+            <span id="klantTotaal" class="me-2">
                 @if (KlantenLijst.Count == FilterLijst.Count)
                 {
-                    <span class="me-2">@KlantenLijst.Count Klanten</span>
+                    <span class="me-1">@KlantenLijst.Count</span>
                 }
                 else
                 {
-                    <span class="me-2">@FilterLijst.Count/@KlantenLijst.Count Klanten</span>
+                    <span class="me-1">@FilterLijst.Count/@KlantenLijst.Count</span>
                 }
-            
+            <span>
+                @((KlantenLijst.Count != 1) ? "Klanten " : "Klant ")
+            </span>
+            </span>
         }
-
-
         <a href="/klanten/aanpassen" class="btn btn-success">
             <span class="bi bi-person-plus" aria-hidden="true"></span> Nieuwe Klant
         </a>

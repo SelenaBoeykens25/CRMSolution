@@ -2,19 +2,27 @@
 @inject NavigationManager navmanger
 @using CRMProject.Client.Pages.Components
 <div class="d-flex justify-content-between align-items-center mb-3">
-
+    <div style="flex: 1 1 0; min-width: 0;">
+        @if (FactuurLijst.Count != 0)
+        {
+            <FactuurFilter FactuurLijst="FactuurLijst" OnFilterChanged="HandleFilterChanged" />
+        }
+    </div>
     <h1 style="flex: 1 1 0; min-width: 0;" class="text-center m-0">Facturen</h1>
     <div style="flex: 1 1 0; min-width: 0;" class="text-end">
         @if (FactuurLijst != null)
         {
             @if (FactuurLijst.Count == FilterLijst.Count)
             {
-                <span class="me-2">@FactuurLijst.Count Facturen</span>
+                <span class="me-2">@FactuurLijst.Count</span>
             }
             else
             {
-                <span class="me-2">@FilterLijst.Count/@FactuurLijst.Count Facturen</span>
+                <span class="me-2">@FilterLijst.Count/@FactuurLijst.Count</span>
             }
+            <span>
+                @((FactuurLijst.Count != 1)? "Facturen " : "Factuur ")
+            </span>
             
         }
 

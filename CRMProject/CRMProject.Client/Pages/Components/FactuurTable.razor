@@ -6,6 +6,7 @@
                 <th>Klant</th>
                 <th>Datum</th>
                 <th>Te Betalen Voor</th>
+                <th>Aantal Lijnen</th>
                 <th>Prijs</th>
                 <th></th>
             </tr>
@@ -25,6 +26,9 @@
                     </td>
                     <td>
                         @factuur.TeBetalenVoor
+                    </td>
+                    <td>
+                        @((factuur.FactuurLijnen != null)? @factuur.FactuurLijnen.Count : "-")
                     </td>
                     <td>
                         &#8364; @factuur.Prijs
