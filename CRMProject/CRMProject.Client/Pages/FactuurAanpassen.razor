@@ -70,7 +70,8 @@
             </label>
             <div class="col-sm-8">
                 <InputNumber id="prijs" class="form-control"
-                             @bind-Value="factuur.Prijs" />
+                             @bind-Value="factuur.Prijs" 
+                             disabled="@(factuur.FactuurLijnen != null && factuur.FactuurLijnen.Count > 0)" />
             </div>
         </div>
         <div class="row my-3">
@@ -115,7 +116,7 @@
                         <th>Omschrijving</th>
                         <th>Prijs zonder BTW</th>
                         <th>BTW Percantage</th>
-                        <th>Prijs Met BTW</th>
+                        <th>Prijs met BTW</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -127,13 +128,19 @@
                                 <InputText @bind-Value="lijn.Omschrijving"/>
                             </td>
                             <td>
-                                <InputNumber @bind-Value="lijn.NettoPrijs" @oninput="@(() => OnNettoPrijsChanged(lijn))"/>
+                                <InputNumber @bind-Value="lijn.NettoPrijs" @oninput="@(() => OnNettoPrijsChanged(lijn))"
+                                             @onblur="@(() => OnNettoPrijsChanged(lijn))" />
                             </td>
                             <td>
-                                <InputNumber @bind-Value="lijn.BtwPercentage" @oninput="@(() => OnBTWChanged(lijn))" />
+                                <InputNumber @bind-Value="lijn.BtwPercentage" @oninput="@(() => OnBTWChanged(lijn))"
+                                             @onblur="@(() => OnBTWChanged(lijn))" />
                             </td>
                             <td>
-                                <InputNumber @bind-Value="lijn.BrutoPrijs" @oninput="@(() => OnBrutoPrijsChanged(lijn))" />
+                                <InputNumber @bind-Value="lijn.BrutoPrijs" @oninput="@(() => OnBrutoPrijsChanged(lijn))"
+                                    @onblur="@(() => OnBrutoPrijsChanged(lijn))" />
+                            </td>
+                            <td>
+                                <button class="btn btn-danger" @onclick="@(()=>VerwijderLijn(lijn))"><span class="bi bi-trash"></span></button>
                             </td>
                         </tr>
                     }
@@ -141,7 +148,7 @@
             </table>
         }
         <button type="button" @onclick="NieuweFactuurLijn" class="btn btn-secondary">Voeg Factuurlijn toe</button>
-
+        <ValidationSummary/>
 
         <div class="row my-3">
             <div class="col-12">
@@ -273,13 +280,32 @@
     private void OnNettoPrijsChanged(FactuurLijn lijn)
     {
         lijn.BrutoPrijs = Math.Round(lijn.NettoPrijs * (1 + (lijn.BtwPercentage / 100)), 2);
+        ZetTotaalPrijs();
     }
     private void OnBTWChanged(FactuurLijn lijn)
     {
         lijn.BrutoPrijs = Math.Round(lijn.NettoPrijs * (1 + (lijn.BtwPercentage / 100)), 2);
+        ZetTotaalPrijs();
     }
     private void OnBrutoPrijsChanged(FactuurLijn lijn)
     {
         lijn.NettoPrijs = Math.Round(lijn.BrutoPrijs / (1 + (lijn.BtwPercentage / 100)), 2);
+        ZetTotaalPrijs();
     }
+
+    public void ZetTotaalPrijs()
+    {
+
+        if(factuur.FactuurLijnen != null && factuur.FactuurLijnen.Count > 0)
+        {
+            factuur.Prijs = factuur.FactuurLijnen.Select(lijn => lijn.BrutoPrijs).Sum();
+        }
+    }
+
+    public void VerwijderLijn(FactuurLijn lijn)
+    {
+        factuur.FactuurLijnen.Remove(lijn);
+        ZetTotaalPrijs();
+    }
+
 }

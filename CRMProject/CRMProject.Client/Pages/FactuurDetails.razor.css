@@ -1,0 +1,31 @@
+@media print {
+    .no-print {
+        display: none !important;
+    }
+
+    .invoice-container {
+        padding: 20px;
+    }
+
+    body {
+        background: white !important;
+    }
+
+    .alert {
+        border: 1px solid #000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+
+.invoice-container {
+    background: white;
+    padding: 2rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+}
+
+.invoice-header {
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 1rem;
+}

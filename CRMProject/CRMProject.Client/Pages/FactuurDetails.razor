@@ -1,0 +1,169 @@
+﻿@page "/facturen/{id:int}"
+@inject FactuurService factuurService
+@inject NavigationManager navmanager
+
+<PageTitle>Factuur @Id</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-3 no-print">
+    <button class="btn btn-secondary" @onclick="GaTerug">
+        <span class="bi bi-arrow-left"></span> Terug
+    </button>
+    <h1 class="flex-grow-1 text-center m-0">Factuur Details</h1>
+    <button class="btn btn-primary" @onclick="Print">
+        <span class="bi bi-printer"></span> Afdrukken
+    </button>
+</div>
+
+@if (factuur == null)
+{
+    <div class="text-center mt-5">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Laden...</span>
+        </div>
+    </div>
+}
+else
+{
+    <div class="invoice-container">
+        <div class="invoice-header mb-4">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2 class="mb-3">FACTUUR</h2>
+                    <p><strong>Factuurnummer:</strong> @factuur.Id</p>
+                    <p><strong>Factuurdatum:</strong> @factuur.FactuurDatum.ToString("dd/MM/yyyy")</p>
+                    <p><strong>Te betalen voor:</strong> @factuur.TeBetalenVoor.ToString("dd/MM/yyyy")</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <h5 class="mb-3">Klantgegevens</h5>
+                    @if (factuur.Klant != null)
+                    {
+                        <p class="mb-1"><strong>@factuur.Klant.Voornaam @factuur.Klant.Naam</strong></p>
+                        @if (factuur.Klant.Adres != null)
+                        {
+                            <p class="mb-0">@factuur.Klant.Adres.Straat @factuur.Klant.Adres.HuisNummer @factuur.Klant.Adres.BusNummer</p>
+                            <p class="mb-0">@factuur.Klant.Adres.Postcode @factuur.Klant.Adres.Stad</p>
+                            <p class="mb-0">@factuur.Klant.Adres.Land?.LandNaam</p>
+                        }
+                        <p class="mb-0 mt-2">@factuur.Klant.EmailAdres</p>
+                        <p class="mb-0">@factuur.Klant.TelefoonNummer</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(factuur.Beschrijving))
+        {
+            <div class="mb-4">
+                <h5>Beschrijving</h5>
+                <p>@factuur.Beschrijving</p>
+            </div>
+        }
+
+        @if (factuur.FactuurLijnen != null && factuur.FactuurLijnen.Count > 0)
+        {
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Omschrijving</th>
+                            <th class="text-end">Netto Prijs</th>
+                            <th class="text-end">BTW %</th>
+                            <th class="text-end">Bruto Prijs</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var lijn in factuur.FactuurLijnen)
+                        {
+                            <tr>
+                                <td>@lijn.Omschrijving</td>
+                                <td class="text-end">€ @lijn.NettoPrijs.ToString("F2")</td>
+                                <td class="text-end">@lijn.BtwPercentage.ToString("F0")%</td>
+                                <td class="text-end">€ @lijn.BrutoPrijs.ToString("F2")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr class="table-light">
+                            <td colspan="3" class="text-end"><strong>Totaal Netto:</strong></td>
+                            <td class="text-end"><strong>€ @BepaalNettoTotaal().ToString("F2")</strong></td>
+                        </tr>
+                        <tr class="table-light">
+                            <td colspan="3" class="text-end"><strong>Totaal BTW:</strong></td>
+                            <td class="text-end"><strong>€ @BepaalTotaalBTW().ToString("F2")</strong></td>
+                        </tr>
+                        <tr class="table-primary">
+                            <td colspan="3" class="text-end"><strong>TOTAAL TE BETALEN:</strong></td>
+                            <td class="text-end"><strong>€ @factuur.Prijs.ToString("F2")</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Totaalbedrag</h5>
+                        <h3 class="text-primary">€ @factuur.Prijs.ToString("F2")</h3>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="alert @GetStatusClass()" role="alert">
+                    <strong>Betalingsstatus:</strong> @factuur.BetaalStatus
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Factuur? factuur;
+
+    protected override async Task OnInitializedAsync()
+    {
+        factuur = await factuurService.GetFactuurAsync(Id);
+    }
+
+    private void GaTerug()
+    {
+        navmanager.NavigateTo("/facturen");
+    }
+
+    private void Print()
+    {
+        navmanager.NavigateTo($"javascript:window.print()");
+    }
+
+    private string GetStatusClass()
+    {
+        if (factuur == null) return "alert-secondary";
+
+        return factuur.BetaalStatus.ToString() switch
+        {
+            "Betaald" => "alert-success",
+            "Openstaand" => "alert-warning",
+            "Achterstallig" => "alert-danger",
+            _ => "alert-secondary"
+        };
+    }
+
+    private decimal BepaalNettoTotaal()
+    {
+        if (factuur?.FactuurLijnen == null) return 0;
+        return factuur.FactuurLijnen.Sum(l => l.NettoPrijs);
+    }
+
+    private decimal BepaalTotaalBTW()
+    {
+        if (factuur?.FactuurLijnen == null) return 0;
+        return factuur.FactuurLijnen.Sum(l => l.BrutoPrijs - l.NettoPrijs);
+    }
+}

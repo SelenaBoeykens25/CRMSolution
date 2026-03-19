@@ -17,7 +17,7 @@ namespace CRM.API.Repo
         {
             return await _context.Facturen
                 .Include(factuur => factuur.FactuurLijnen)
-                .Include(factuur => factuur.Klant)
+                .Include(factuur => factuur.Klant).ThenInclude(klant=>klant.Adres).ThenInclude(adres=>adres.Land)
                 .FirstOrDefaultAsync(factuur => factuur.Id == id);
         }
 
@@ -45,14 +45,6 @@ namespace CRM.API.Repo
             {
                 factuur.FactuurLijnen = new List<FactuurLijn>();
             }
-
-            //factuur.Id = 0;
-
-            /*foreach (var factuurLijn in factuur.FactuurLijnen)
-            {
-                factuurLijn.Id = 0;
-                factuurLijn.FactuurId = 0;
-            }*/
 
             var result = await _context.Facturen.AddAsync(factuur);
             await _context.SaveChangesAsync();
