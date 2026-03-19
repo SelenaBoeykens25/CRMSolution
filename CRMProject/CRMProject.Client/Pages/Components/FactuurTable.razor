@@ -1,3 +1,4 @@
+@using CRM.Models.Enums
 <div class="table-responsive">
     <table class="table table-striped table-hover border rounded">
         <thead>
@@ -8,6 +9,7 @@
                 <th>Te Betalen Voor</th>
                 <th>Aantal Lijnen</th>
                 <th>Prijs</th>
+                <th>Betaal Status</th>
                 <th></th>
             </tr>
         </thead>
@@ -34,6 +36,16 @@
                         &#8364; @factuur.Prijs
                     </td>
                     <td>
+                        <InputSelect @bind-Value="factuur.BetaalStatus" 
+                                     @bind-Value:after="@(() => PasStatusAan(factuur))"
+                                     class="@factuur.BetaalStatus.ToString().ToLower()">
+                            @foreach (var statusoptie in Enum.GetValues(typeof(CRM.Models.Enums.BetaalStatus)))
+                            {
+                                <option value="@statusoptie">@statusoptie</option>
+                            }
+                        </InputSelect>
+                    </td>
+                    <td>
                         <a href="/facturen/@factuur.Id" class="text-decoration-none" title="Details">
                             <span class="bi bi-eye" aria-hidden="true"></span>
                         </a>
@@ -55,4 +67,17 @@
 @code {
     [Parameter]
     public List<Factuur> FilterLijst { get; set; } = new();
+
+    [Inject]
+    public FactuurService factuurService { get; set; }
+
+    public async Task PasStatusAan(Factuur factuur)
+    {
+        await factuurService.UpdateFactuur(factuur);
+    }
+
+    private string GetStatusClass(BetaalStatus status)
+    {
+        return status.ToString().ToLower();
+    }
 }

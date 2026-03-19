@@ -1,0 +1,61 @@
+@inject FactuurService factuurService
+@using CRM.Models.Enums
+
+@if (betaalStatusData == null)
+{
+    <p>Laden...</p>
+}
+else if (!betaalStatusData.Any())
+{
+    <p>Geen facturen gevonden.</p>
+}
+else
+{
+    <div class="betaalstatus-overzicht">
+        @foreach (var item in betaalStatusData)
+        {
+            <div class="status-item">
+                <div class="status-label">@GetBetaalStatusLabel(item.Status)</div>
+                <div class="status-aantal"><a href="/facturen?filterOp=Status&status=@item.Status">@item.Aantal</a></div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private class BetaalStatusData
+    {
+        public BetaalStatus Status { get; set; }
+        public int Aantal { get; set; }
+    }
+
+    List<BetaalStatusData>? betaalStatusData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var facturen = await factuurService.GetFacturenAsync();
+
+        if (facturen != null)
+        {
+            betaalStatusData = facturen
+                .GroupBy(f => f.BetaalStatus)
+                .Select(g => new BetaalStatusData
+                {
+                    Status = g.Key,
+                    Aantal = g.Count()
+                })
+                .OrderBy(b => b.Status)
+                .ToList();
+        }
+    }
+
+    string GetBetaalStatusLabel(BetaalStatus status) => status switch
+    {
+        BetaalStatus.Openstaand => "Openstaand",
+        BetaalStatus.InBehandeling => "In Behandeling",
+        BetaalStatus.Betaald => "Betaald",
+        BetaalStatus.Mislukt => "Mislukt",
+        BetaalStatus.Geannuleerd => "Geannuleerd",
+        _ => status.ToString()
+    };
+}

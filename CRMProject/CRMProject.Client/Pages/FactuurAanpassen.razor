@@ -98,8 +98,9 @@
             </label>
             <div class="col-sm-8">
                 <InputSelect id="status"
-                             @bind-Value="factuur.BetaalStatus">
-                    <option value="">- Selecteer status -</option>
+                             @bind-Value="factuur.BetaalStatus"
+                             class="@factuur.BetaalStatus.ToString().ToLower()"
+                >
                     @foreach (var statusoptie in Enum.GetValues(typeof(CRM.Models.Enums.BetaalStatus)))
                     {
                         <option value="@statusoptie">@statusoptie</option>
@@ -147,14 +148,14 @@
                 </tbody>
             </table>
         }
-        <button type="button" @onclick="NieuweFactuurLijn" class="btn btn-secondary">Voeg Factuurlijn toe</button>
-        <ValidationSummary/>
 
         <div class="row my-3">
-            <div class="col-12">
+            <div class="col-12 d-flex justify-content-between">
                 <button type="submit" class="btn btn-primary">Opslaan</button>
+                <button type="button" @onclick="NieuweFactuurLijn" class="btn btn-success"><span class="bi bi-plus-circle-fill"></span> Voeg Factuurlijn toe </button>
             </div>
         </div>
+        <ValidationSummary/>
     </EditForm>
 
 

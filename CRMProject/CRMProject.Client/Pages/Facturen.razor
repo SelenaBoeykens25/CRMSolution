@@ -1,27 +1,31 @@
 ﻿@page "/facturen"
-@inject NavigationManager navmanger
+@inject NavigationManager NavigationManager
 @using CRMProject.Client.Pages.Components
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div style="flex: 1 1 0; min-width: 0;">
         @if (FactuurLijst.Count != 0)
         {
-            <FactuurFilter FactuurLijst="FactuurLijst" OnFilterChanged="HandleFilterChanged" />
+            <FactuurFilter FactuurLijst="FactuurLijst" 
+                          OnFilterChanged="HandleFilterChanged" 
+                          InitialQueryParams="queryParams" />
         }
     </div>
     <h1 style="flex: 1 1 0; min-width: 0;" class="text-center m-0">Facturen</h1>
     <div style="flex: 1 1 0; min-width: 0;" class="text-end">
         @if (FactuurLijst != null)
         {
-            @if (FactuurLijst.Count == FilterLijst.Count)
-            {
-                <span class="me-2">@FactuurLijst.Count</span>
-            }
-            else
-            {
-                <span class="me-2">@FilterLijst.Count/@FactuurLijst.Count</span>
-            }
-            <span>
-                @((FactuurLijst.Count != 1)? "Facturen " : "Factuur ")
+            <span id="factuurTotaal" class="me-3">
+                @if (FactuurLijst.Count == FilterLijst.Count)
+                {
+                    <span class="me-1">@FactuurLijst.Count</span>
+                }
+                else
+                {
+                    <span class="me-1">@FilterLijst.Count/@FactuurLijst.Count</span>
+                }
+                <span>
+                    @((FactuurLijst.Count != 1) ? "Facturen" : "Factuur")
+                </span>
             </span>
             
         }
@@ -55,11 +59,28 @@ else
     List<Factuur> FactuurLijst = new List<Factuur>();
     List<Factuur> FilterLijst = new List<Factuur>();
     bool firstRender = false;
+    Dictionary<string, string> queryParams = new();
 
     protected override async Task OnInitializedAsync()
     {
         FactuurLijst = await factuurService.GetFacturenAsync();
         FilterLijst = FactuurLijst;
+
+        // Parse query parameters from URL
+        var uri = new Uri(NavigationManager.Uri);
+        if (!string.IsNullOrEmpty(uri.Query))
+        {
+            var query = uri.Query.TrimStart('?');
+            var pairs = query.Split('&');
+            foreach (var pair in pairs)
+            {
+                var parts = pair.Split('=');
+                if (parts.Length == 2)
+                {
+                    queryParams[Uri.UnescapeDataString(parts[0])] = Uri.UnescapeDataString(parts[1]);
+                }
+            }
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

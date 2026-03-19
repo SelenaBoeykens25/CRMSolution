@@ -54,6 +54,7 @@ namespace CRM.API.Repo
         public async Task<Factuur> DeleteFactuurAsync(int id)
         {
             var result = await _context.Facturen
+                .Include(factuur => factuur.FactuurLijnen)
                 .FirstOrDefaultAsync(factuur => factuur.Id == id);
             if (result != null)
             {

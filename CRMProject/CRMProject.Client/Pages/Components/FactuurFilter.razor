@@ -1,4 +1,6 @@
-﻿<EditForm OnSubmit="HandleFilter" Model="filterVariabele" class="d-flex gap-2 align-items-center">
+﻿@using CRM.Models.Enums
+@inject NavigationManager NavigationManager
+<EditForm OnSubmit="HandleFilter" Model="filterVariabele" class="d-flex gap-2 align-items-center">
     @if (filterVariabele.filterOp == "Nummer" || filterVariabele.filterOp == "Aantal" || filterVariabele.filterOp == "Prijs")
     {
         @if (filterVariabele.filterOp == "Nummer")
@@ -22,6 +24,15 @@
     else if (filterVariabele.filterOp == "Klant")
     {   
         <InputText @bind-Value="filterVariabele.filter" class="form-control" style="width: 400px;" autofocus />
+    }
+    else if(filterVariabele.filterOp == "Status")
+    {
+        <InputSelect @bind-Value="filterVariabele.filterStatus" class="form-select" style="width: 300px;">
+            @foreach (var statusoptie in Enum.GetValues(typeof(CRM.Models.Enums.BetaalStatus)))
+            {
+                <option value="@statusoptie">@statusoptie</option>
+            }
+        </InputSelect>
     }
     else
     {
@@ -51,6 +62,7 @@
         <option Value="@("TBV")">Betalen Voor</option>
         <option Value="@("Aantal")">Aantal Lijnen</option>
         <option Value="@("Prijs")">Prijs</option>
+        <option Value="@("Status")">Betaalstatus</option>
     </InputSelect>
     <button type="submit" class="btn btn-primary flex-shrink-0"><span class="bi bi-search"></span> Filter</button>
 </EditForm>
@@ -62,6 +74,9 @@
     [Parameter]
     public EventCallback<List<Factuur>> OnFilterChanged { get; set; }
 
+    [Parameter]
+    public Dictionary<string, string> InitialQueryParams { get; set; } = new();
+
     private class FilterModel
     {
         public string filter { get; set; } = "";
@@ -72,9 +87,79 @@
         public DateOnly filterDag { get; set; } = DateOnly.FromDateTime(DateTime.Today);
         public string vergelijkingsOperator { get; set; } = "=";
         public decimal filterNummer { get; set; }
+        public BetaalStatus filterStatus { get; set; }
     }
 
     private FilterModel filterVariabele = new FilterModel();
+    private bool isInitialized = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && InitialQueryParams != null && InitialQueryParams.Count > 0)
+        {
+            ApplyQueryParameters();
+            await HandleFilter();
+            StateHasChanged();
+        }
+    }
+
+    private void ApplyQueryParameters()
+    {
+        if (InitialQueryParams.TryGetValue("filterOp", out var filterOp))
+        {
+            filterVariabele.filterOp = filterOp;
+        }
+
+        if (InitialQueryParams.TryGetValue("klant", out var klant))
+        {
+            filterVariabele.filter = klant;
+        }
+
+        if (InitialQueryParams.TryGetValue("nummer", out var nummerStr) && decimal.TryParse(nummerStr, out var nummer))
+        {
+            filterVariabele.filterNummer = nummer;
+        }
+
+        if (InitialQueryParams.TryGetValue("prijs", out var prijsStr) && decimal.TryParse(prijsStr, out var prijs))
+        {
+            filterVariabele.filterNummer = prijs;
+        }
+
+        if (InitialQueryParams.TryGetValue("aantal", out var aantalStr) && decimal.TryParse(aantalStr, out var aantal))
+        {
+            filterVariabele.filterNummer = aantal;
+        }
+
+        if (InitialQueryParams.TryGetValue("operator", out var op))
+        {
+            filterVariabele.vergelijkingsOperator = op;
+        }
+
+        if (InitialQueryParams.TryGetValue("status", out var statusStr) && Enum.TryParse<BetaalStatus>(statusStr, out var status))
+        {
+            filterVariabele.filterStatus = status;
+        }
+
+        if (InitialQueryParams.TryGetValue("datumSoort", out var datumSoort))
+        {
+            filterVariabele.filterDatumSoort = datumSoort;
+        }
+
+        if (InitialQueryParams.TryGetValue("jaar", out var jaarStr) && int.TryParse(jaarStr, out var jaar))
+        {
+            filterVariabele.filterJaar = jaar;
+        }
+
+        if (InitialQueryParams.TryGetValue("maand", out var maandStr) && int.TryParse(maandStr, out var maand))
+        {
+            filterVariabele.filterMaand = maand;
+        }
+
+        if (InitialQueryParams.TryGetValue("dag", out var dagStr) && DateOnly.TryParse(dagStr, out var dag))
+        {
+            filterVariabele.filterDag = dag;
+        }
+    }
 
     private async Task HandleFilter()
     {
@@ -108,10 +193,10 @@
                 _ => FactuurLijst
             },
             "Aantal" => ApplyNumericFilter(FactuurLijst, f => f.FactuurLijnen.Count, filterVariabele.filterNummer, filterVariabele.vergelijkingsOperator),
+            "Status" => FactuurLijst.Where(f=> f.BetaalStatus == filterVariabele.filterStatus).ToList(),
             "Prijs" => ApplyNumericFilter(FactuurLijst, f => f.Prijs, filterVariabele.filterNummer, filterVariabele.vergelijkingsOperator),
             _ => FactuurLijst
         };
-
         await OnFilterChanged.InvokeAsync(filteredList);
     }
 

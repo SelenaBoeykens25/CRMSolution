@@ -1,0 +1,29 @@
+﻿@page "/facturen/deleteconfirm/{id:int}"
+@inject NavigationManager navmanager
+<div class="d-flex flex-column justify-content-center align-items-center mt-5">
+    <h1 class="mb-4">Factuur #@Id Verwijderen?</h1>
+    <div>
+        <button class="btn btn-success me-2" @onclick="Verwijder">Ja</button>
+        <button class="btn btn-danger" @onclick="Annuleren">Nee</button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public string Naam { get; set; }
+    [Inject]
+    public FactuurService _factuurService { get; set; }
+
+    private async Task Verwijder()
+    {
+        await _factuurService.DeleteFactuur(Id);
+        navmanager.NavigateTo("/facturen");
+    }
+
+    private void Annuleren()
+    {
+        navmanager.NavigateTo("/facturen");
+    }
+}

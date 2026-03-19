@@ -1,6 +1,7 @@
 using CRMProject.Client.Services;
 using CRMProject.Client.Pages;
 using CRMProject.Components;
+using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton(
@@ -14,6 +15,12 @@ builder.Services.AddTransient<FactuurService>();
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddRadzenComponents();
+builder.Services.AddScoped<DialogService>();
+builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<TooltipService>();
+builder.Services.AddScoped<ContextMenuService>();
 
 var app = builder.Build();
 

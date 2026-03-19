@@ -1,10 +1,13 @@
 ﻿@page "/klanten"
+@inject NavigationManager NavigationManager
 @using CRMProject.Client.Pages.Components
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div style="flex: 1 1 0; min-width: 0;">
         @if (KlantenLijst.Count != 0)
         {
-            <KlantenFilter KlantenLijst="KlantenLijst" OnFilterChanged="HandleFilterChanged" />
+            <KlantenFilter KlantenLijst="KlantenLijst" 
+                          OnFilterChanged="HandleFilterChanged" 
+                          InitialQueryParams="queryParams" />
         }
     </div>
     <h1 style="flex: 1 1 0; min-width: 0;" class="text-center m-0">Klanten</h1>
@@ -20,9 +23,9 @@
                 {
                     <span class="me-1">@FilterLijst.Count/@KlantenLijst.Count</span>
                 }
-            <span>
-                @((KlantenLijst.Count != 1) ? "Klanten " : "Klant ")
-            </span>
+                <span>
+                    @((KlantenLijst.Count != 1) ? "Klanten " : "Klant ")
+                </span>
             </span>
         }
         <a href="/klanten/aanpassen" class="btn btn-success">
@@ -50,11 +53,28 @@ else
     List<Klant> KlantenLijst = new List<Klant>();
     List<Klant> FilterLijst = new List<Klant>();
     bool firstRender = false;
+    Dictionary<string, string> queryParams = new();
 
     protected override async Task OnInitializedAsync()
     {
         KlantenLijst = await klantenService.GetKlantenAsync();
         FilterLijst = KlantenLijst;
+
+        // Parse query parameters from URL
+        var uri = new Uri(NavigationManager.Uri);
+        if (!string.IsNullOrEmpty(uri.Query))
+        {
+            var query = uri.Query.TrimStart('?');
+            var pairs = query.Split('&');
+            foreach (var pair in pairs)
+            {
+                var parts = pair.Split('=');
+                if (parts.Length == 2)
+                {
+                    queryParams[Uri.UnescapeDataString(parts[0])] = Uri.UnescapeDataString(parts[1]);
+                }
+            }
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

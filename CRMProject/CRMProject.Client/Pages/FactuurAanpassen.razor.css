@@ -30,3 +30,45 @@
         .dropdown-list .dropdown-item:last-child {
             border-bottom: none;
         }
+
+::deep .openstaand {
+    background-color: aquamarine;
+    color: white;
+}
+
+    ::deep .openstaand option {
+        background-color: white;
+        color: black;
+    }
+
+::deep .inbehandeling {
+    background-color: orange;
+    color: white;
+}
+
+    ::deep .inbehandeling option {
+        background-color: white;
+        color: black;
+    }
+
+::deep .betaald {
+    background-color: green;
+    color: white;
+}
+
+    ::deep .betaald option {
+        background-color: white;
+        color: black;
+    }
+
+::deep .mislukt,
+::deep .geannuleerd {
+    background-color: red;
+    color: white;
+}
+
+    ::deep .mislukt option,
+    ::deep .geannuleerd option {
+        background-color: white;
+        color: black;
+    }

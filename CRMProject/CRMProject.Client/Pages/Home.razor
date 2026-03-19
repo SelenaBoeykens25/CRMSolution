@@ -1,7 +1,19 @@
 ﻿@page "/"
+@using CRMProject.Client.Pages.Components
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Welkom bij CRM</h1>
 
-Welcome to your new app.
+<div style="display: flex; gap: 30px; margin: 20px 0; flex-wrap: wrap;">
+    <div style="flex: 1; min-width: 500px;">
+            <h3>Facturen per maand</h3>
+        <FactuurChart />
+    </div>
+    <div style="flex: 0 0 300px;">
+        <div class="text-center">
+        <h3>Facturen per status</h3>
+        </div>
+        <BetaalStatusOverzicht />
+    </div>
+</div>

@@ -1,3 +1,4 @@
+@inject NavigationManager NavigationManager
 <EditForm OnSubmit="HandleFilter" Model="filterVariabele" class="d-flex gap-2 align-items-center">
     <InputText @bind-Value="filterVariabele.filter" class="form-control" autofocus style="width: 400px;" />
     <InputSelect @bind-Value="filterVariabele.filterOp" class="form-select" style="width: 150px;">
@@ -16,6 +17,9 @@
     [Parameter]
     public EventCallback<List<Klant>> OnFilterChanged { get; set; }
 
+    [Parameter]
+    public Dictionary<string, string> InitialQueryParams { get; set; } = new();
+
     private class FilterModel
     {
         public string filter { get; set; } = "";
@@ -23,6 +27,29 @@
     }
 
     private FilterModel filterVariabele = new FilterModel();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && InitialQueryParams != null && InitialQueryParams.Count > 0)
+        {
+            ApplyQueryParameters();
+            await HandleFilter();
+            StateHasChanged();
+        }
+    }
+
+    private void ApplyQueryParameters()
+    {
+        if (InitialQueryParams.TryGetValue("filterOp", out var filterOp))
+        {
+            filterVariabele.filterOp = filterOp;
+        }
+
+        if (InitialQueryParams.TryGetValue("filter", out var filter))
+        {
+            filterVariabele.filter = filter;
+        }
+    }
 
     private async Task HandleFilter()
     {
@@ -48,7 +75,6 @@
         {
             filteredList = KlantenLijst;
         }
-
         await OnFilterChanged.InvokeAsync(filteredList);
     }
 }

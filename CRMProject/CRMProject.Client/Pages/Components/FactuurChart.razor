@@ -1,0 +1,91 @@
+@inject FactuurService factuurService
+
+@if (factuurData == null)
+{
+    <p>Laden...</p>
+}
+else if (!factuurData.Any())
+{
+    <p>Geen facturen gevonden.</p>
+}
+else
+{
+    <RadzenChart>
+        <RadzenColumnSeries Data="@factuurData" CategoryProperty="Maand" Title="Aantal facturen" ValueProperty="Aantal" />
+        <RadzenLineSeries Data="@factuurData" CategoryProperty="Maand" Title="Winst (€)" ValueProperty="Winst" LineType="LineType.Solid">
+            <RadzenMarkers MarkerType="MarkerType.Circle" />
+        </RadzenLineSeries>
+        <RadzenCategoryAxis Padding="20" />
+        <RadzenValueAxis>
+            <RadzenGridLines Visible="true" />
+            <RadzenAxisTitle Text="Aantal / Winst (€)" />
+        </RadzenValueAxis>
+    </RadzenChart>
+}
+
+@code {
+    public class FactuurData
+    {
+        public string Maand { get; set; } = "";
+        public int Aantal { get; set; }
+        public decimal Winst { get; set; }
+    }
+
+    List<FactuurData>? factuurData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var facturen = await factuurService.GetFacturenAsync();
+
+        if (facturen != null)
+        {
+            var ditJaar = DateTime.Now.Year;
+
+            factuurData = facturen
+                .Where(f => f.FactuurDatum.Year == ditJaar)
+                .GroupBy(f => f.FactuurDatum.Month)
+                .Select(g => new FactuurData
+                {
+                    Maand = GetMaandNaam(g.Key),
+                    Aantal = g.Count(),
+                    Winst = g.Sum(fl => fl.Prijs)
+                })
+                .OrderBy(f => GetMaandNummer(f.Maand))
+                .ToList();
+        }
+    }
+
+    string GetMaandNaam(int maand) => maand switch
+    {
+        1 => "Jan",
+        2 => "Feb",
+        3 => "Mrt",
+        4 => "Apr",
+        5 => "Mei",
+        6 => "Jun",
+        7 => "Jul",
+        8 => "Aug",
+        9 => "Sep",
+        10 => "Okt",
+        11 => "Nov",
+        12 => "Dec",
+        _ => ""
+    };
+
+    int GetMaandNummer(string maand) => maand switch
+    {
+        "Jan" => 1,
+        "Feb" => 2,
+        "Mrt" => 3,
+        "Apr" => 4,
+        "Mei" => 5,
+        "Jun" => 6,
+        "Jul" => 7,
+        "Aug" => 8,
+        "Sep" => 9,
+        "Okt" => 10,
+        "Nov" => 11,
+        "Dec" => 12,
+        _ => 0
+    };
+}
