@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
     <ProjectReference Include="..\..\CRM.Models\CRM.Models.csproj" />
     <ProjectReference Include="..\CRMProject.Client\CRMProject.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.3" />

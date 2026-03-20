@@ -1,4 +1,9 @@
-﻿<nav class="navbar navbar-expand-lg navbar-dark">
+﻿@rendermode InteractiveWebAssembly
+@using CRMProject.Client.Services
+@inject AuthenticationNotificationService AuthNotification
+@implements IDisposable
+
+<nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">CRM</a>
         <button class="navbar-toggler" type="button" onclick="document.querySelector('.navbar-collapse').classList.toggle('show')">
@@ -6,23 +11,30 @@
         </button>
         <div class="navbar-collapse collapse">
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                        <span class="bi bi-house icon" aria-hidden="true"></span> Home
-                    </NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="klanten">
-                        <span class="bi bi-people icon" aria-hidden="true"></span> Klanten
-                    </NavLink>
-                </li>
-                <li class="nav-item">
-                    <NavLink class="nav-link" href="facturen">
-                        <span class="bi bi-file-earmark-text icon" aria-hidden="true"></span> Facturen
-                    </NavLink>
-                </li>
+                <NavLinks @ref="navLinksRef"/>
             </ul>
         </div>
     </div>
 </nav>
 
+@code {
+    private NavLinks? navLinksRef;
+
+    protected override void OnInitialized()
+    {
+        AuthNotification.OnAuthenticationChanged += RefreshAuthenticationAsync;
+    }
+
+    private async void RefreshAuthenticationAsync()
+    {
+        if (navLinksRef != null)
+        {
+            await navLinksRef.CheckAuthenticationAsync();
+        }
+    }
+
+    public void Dispose()
+    {
+        AuthNotification.OnAuthenticationChanged -= RefreshAuthenticationAsync;
+    }
+}

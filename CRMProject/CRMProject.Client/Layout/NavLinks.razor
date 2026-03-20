@@ -1,0 +1,109 @@
+@using Blazored.SessionStorage
+@using CRMProject.Client.Services
+@inject ISessionStorageService SessionStorage
+@inject NavigationManager NavigationManager
+@inject AuthenticationNotificationService AuthNotification
+
+@if (isAuthenticated)
+{
+    <li class="nav-item">
+        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+            <span class="bi bi-house icon" aria-hidden="true"></span> Home
+        </NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="klanten">
+            <span class="bi bi-people icon" aria-hidden="true"></span> Klanten
+        </NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="facturen">
+            <span class="bi bi-file-earmark-text icon" aria-hidden="true"></span> Facturen
+        </NavLink>
+    </li>
+    <li class="nav-item dropdown" style="position: relative;">
+        <a class="nav-link dropdown-toggle @(isDropdownOpen ? "show" : "")" 
+           href="#" 
+           id="userDropdown" 
+           role="button" 
+           @onclick="ToggleDropdown" 
+           @onclick:preventDefault
+           aria-expanded="@isDropdownOpen">
+            <span class="bi bi-person-circle icon" aria-hidden="true"></span> Account
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end compact-dropdown @(isDropdownOpen ? "show" : "")" 
+            style="position: absolute; right: 0; top: 100%; z-index: 1000;"
+            aria-labelledby="userDropdown">
+            @if (isAdminOrOwner)
+            {
+                <li>
+                    <a class="dropdown-item" href="#" @onclick="NaarNieuwAccount" @onclick:preventDefault>
+                        <span class="bi bi-person-plus me-2"></span> Nieuw Account
+                    </a>
+                </li>
+            }
+
+            <li>
+                <a class="dropdown-item" href="#" @onclick="HandleLogout" @onclick:preventDefault>
+                    <span class="bi bi-box-arrow-right me-2"></span> Uitloggen
+                </a>
+            </li>
+        </ul>
+    </li>
+}
+
+@code {
+    private bool isAuthenticated = false;
+    private bool isDropdownOpen = false;
+    private bool isAdminOrOwner = false;
+
+  
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await CheckAuthenticationAsync();
+        }
+    }
+
+    public async Task CheckAuthenticationAsync()
+    {
+        var loggedInEmail = await SessionStorage.GetItemAsync<string>("loggedInEmail");
+        isAuthenticated = !string.IsNullOrEmpty(loggedInEmail);
+
+        if (isAuthenticated)
+        {
+            var securityLevel = await SessionStorage.GetItemAsync<string>("securityLevel");
+            isAdminOrOwner = securityLevel == "Admin" || securityLevel == "Owner";
+        }
+        else
+        {
+            isAdminOrOwner = false;
+        }
+
+        StateHasChanged();
+    }
+
+    private void ToggleDropdown()
+    {
+        isDropdownOpen = !isDropdownOpen;
+    }
+
+    private async Task HandleLogout()
+    {
+        isDropdownOpen = false;
+        await SessionStorage.RemoveItemAsync("loggedInEmail");
+        await SessionStorage.RemoveItemAsync("securityLevel");
+        isAuthenticated = false;
+        isAdminOrOwner = false;
+        AuthNotification.NotifyAuthenticationChanged();
+        NavigationManager.NavigateTo("/login");
+    }
+
+    private void NaarNieuwAccount()
+    {
+        isDropdownOpen = false;
+        NavigationManager.NavigateTo("/nieuwaccount");
+    }
+}

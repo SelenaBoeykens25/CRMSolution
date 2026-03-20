@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.4" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
 	  <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.3" />
@@ -20,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CRM.Models\CRM.Models.csproj" />
+    <ProjectReference Include="..\CRMProject\CRMProject.Client\CRMProject.Client.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 ﻿@page "/klanten"
+@inherits AuthenticatedPageBase
 @inject NavigationManager NavigationManager
 @using CRMProject.Client.Pages.Components
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -57,10 +58,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
+
         KlantenLijst = await klantenService.GetKlantenAsync();
         FilterLijst = KlantenLijst;
 
-        // Parse query parameters from URL
+        // Parse query parameters van URL
         var uri = new Uri(NavigationManager.Uri);
         if (!string.IsNullOrEmpty(uri.Query))
         {

@@ -2,6 +2,7 @@ using CRMProject.Client.Services;
 using CRMProject.Client.Pages;
 using CRMProject.Components;
 using Radzen;
+using Blazored.SessionStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton(
@@ -10,7 +11,9 @@ builder.Services.AddSingleton(
 builder.Services.AddTransient<KlantenService>();
 builder.Services.AddTransient<LandService>();
 builder.Services.AddTransient<FactuurService>();
-
+builder.Services.AddTransient<AccountService>();
+builder.Services.AddScoped<AuthenticationNotificationService>();
+builder.Services.AddBlazoredSessionStorage();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

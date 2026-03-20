@@ -1,6 +1,7 @@
 ﻿@page "/facturen/aanpassen"
 @page "/facturen/toevoegen"
 @page "/facturen/aanpassen/{id:int}"
+@inherits AuthenticatedPageBase
 @inject NavigationManager navmanager
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -244,6 +245,8 @@
 
     protected async override Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
+
         MogelijkeKlanten = await _klantenService.GetKlantenAsync();
         GefilterdeKlanten = MogelijkeKlanten;
     }
@@ -257,7 +260,6 @@
         }
         else
         {
-            factuur.FactuurLijnen = null;
             var result = await _factuurService.AddFactuur(factuur);
 
             if (result != null)

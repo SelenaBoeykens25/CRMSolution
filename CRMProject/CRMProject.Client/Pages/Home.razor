@@ -1,4 +1,5 @@
 ﻿@page "/"
+@inherits AuthenticatedPageBase
 @using CRMProject.Client.Pages.Components
 
 <PageTitle>Home</PageTitle>
@@ -15,5 +16,16 @@
         <h3>Facturen per status</h3>
         </div>
         <BetaalStatusOverzicht />
+    </div>
+</div>
+
+<div class="mt-4 mb-4">
+    <div class="d-flex gap-3 justify-content-center">
+        <a href="klanten" class="btn btn-primary btn-lg">
+            <span class="bi bi-people me-2"></span> Klanten
+        </a>
+        <a href="facturen" class="btn btn-success btn-lg">
+            <span class="bi bi-file-earmark-text me-2"></span> Facturen
+        </a>
     </div>
 </div>

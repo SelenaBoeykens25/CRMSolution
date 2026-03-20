@@ -18,6 +18,8 @@ builder.Services.AddDbContext<KlantenDbContext>(options => options.UseSqlServer(
 builder.Services.AddScoped<IKlantenRepository, SQLKlantenRepository>();
 builder.Services.AddScoped<IFactuurRepository, SQLFactuurRepository>();
 builder.Services.AddScoped<ILandRepository, SQLLandRepository>();
+builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
+
 
 builder.Services.AddOpenApi();
 

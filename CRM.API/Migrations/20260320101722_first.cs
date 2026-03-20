@@ -19,7 +19,7 @@ namespace CRM.API.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Wachtwoord = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AanmaakDatum = table.Column<DateOnly>(type: "date", nullable: false),
                     SecurityLevel = table.Column<int>(type: "int", nullable: false)
@@ -143,9 +143,9 @@ namespace CRM.API.Migrations
                 columns: new[] { "Id", "AanmaakDatum", "Email", "SecurityLevel", "Wachtwoord" },
                 values: new object[,]
                 {
-                    { 1, new DateOnly(2026, 3, 18), "admin@admin.com", 1, "admin123" },
-                    { 2, new DateOnly(2026, 3, 18), "owner@owner.com", 2, "owner123" },
-                    { 3, new DateOnly(2026, 3, 18), "user@user.com", 0, "guest123" }
+                    { 1, new DateOnly(2026, 3, 20), "admin@admin.com", 1, "$2a$11$iIwo2tifCSV7AZhM2V2p/egBQmGNCzOmzCFXB8Zmx32miYSXm15y6" },
+                    { 2, new DateOnly(2026, 3, 20), "owner@owner.com", 2, "$2a$11$FGKEQFBarNPb0cWFPTGM1Ox9ksO7ZQk4ZrpvqriYM5C/Kq.3Ps/uq" },
+                    { 3, new DateOnly(2026, 3, 20), "user@user.com", 0, "$2a$11$Q6G5eiyMSZzYttcrMrYxVe9aJvsFKu3j3N0bp0QCDBQ9bFfJ21Sa2" }
                 });
 
             migrationBuilder.InsertData(
@@ -174,6 +174,12 @@ namespace CRM.API.Migrations
                 name: "IX_FactuurLijnen_FactuurId",
                 table: "FactuurLijnen",
                 column: "FactuurId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_GebruikersAccounts_Email",
+                table: "GebruikersAccounts",
+                column: "Email",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Klanten_AdresId",

@@ -1,0 +1,109 @@
+﻿@page "/nieuwaccount"
+@rendermode InteractiveWebAssembly
+@using CRM.Models
+@using CRM.Models.Enums
+@using CRMProject.Client.Services
+@using Blazored.SessionStorage
+@inject AccountService accountService
+@inject NavigationManager NavigationManager
+@inject ISessionStorageService SessionStorage
+
+<div class="container mt-4">
+    <h3>Nieuw Account</h3>
+    
+    <EditForm Model="@newAccount" OnValidSubmit="@HandleSubmit">
+        <DataAnnotationsValidator />
+        
+        <div class="form-group mb-3">
+            <label for="email">Email</label>
+            <InputText id="email" @bind-Value="newAccount.Email" class="form-control" />
+            <ValidationMessage For="@(() => newAccount.Email)" />
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="wachtwoord">Wachtwoord</label>
+            <InputText id="wachtwoord" type="password" @bind-Value="newAccount.Wachtwoord" class="form-control" />
+            <ValidationMessage For="@(() => newAccount.Wachtwoord)" />
+        </div>
+
+        @if (isOwner)
+        {
+            <div class="form-group mb-3">
+                <label for="securityLevel">SecurityLevel</label>
+                <InputSelect id="securityLevel" @bind-Value="newAccount.SecurityLevel" class="form-control">
+                    <option value="">-- Selecteer SecurityLevel --</option>
+                    @foreach (var level in Enum.GetValues<SecurityLevel>())
+                    {
+                        <option value="@level">@level</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => newAccount.SecurityLevel)" />
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger">@errorMessage</div>
+        }
+
+        <button type="submit" class="btn btn-primary" disabled="@isLoading">Opslaan</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancel">Annuleren</button>
+    </EditForm>
+</div>
+
+@code {
+    private GebruikersAccount newAccount = new();
+    private string errorMessage = string.Empty;
+    private bool isLoading = false;
+    private bool isOwner = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var securityLevel = await SessionStorage.GetItemAsync<string>("securityLevel");
+            isOwner = securityLevel == "Owner";
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        isLoading = true;
+        errorMessage = string.Empty;
+
+        try
+        {
+            var exists = await accountService.BestaatAlAsync(newAccount.Email);
+            if (exists)
+            {
+                errorMessage = "Dit email adres bestaat al.";
+                isLoading = false;
+                return;
+            }
+
+            var result = await accountService.AddAccountAsync(newAccount);
+            if (result != null)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                errorMessage = "Er is een fout opgetreden bij het aanmaken van het account.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Fout: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}

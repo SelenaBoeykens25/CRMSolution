@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using CRM.Models;
 using CRM.Models.Enums;
+
 namespace CRM.API.Models
 {
     public class KlantenDbContext : DbContext
@@ -20,8 +21,10 @@ namespace CRM.API.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<GebruikersAccount>()
+                .HasIndex(g => g.Email)
+                .IsUnique();
 
-            
             modelBuilder.Entity<Factuur>()
                 .Property(f => f.Prijs)
                 .HasPrecision(18, 2);
@@ -45,27 +48,27 @@ namespace CRM.API.Models
                 .HasForeignKey(a => a.FactuurId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
+            // Static pre-computed BCrypt hashes - NO dynamic calls!
             modelBuilder.Entity<GebruikersAccount>().HasData(
                 new GebruikersAccount
                 {
                     Id = 1,
                     Email = "admin@admin.com",
-                    Wachtwoord = "admin123",
+                    Wachtwoord = "$2a$11$PE6KLR6iBRArcrrmg5Q3I.CeBU6YbTscN/nelbDhmhOchiDmqECaq",
                     SecurityLevel = SecurityLevel.Admin
                 },
                 new GebruikersAccount
                 {
                     Id = 2,
                     Email = "owner@owner.com",
-                    Wachtwoord = "owner123",
+                    Wachtwoord = "$2a$11$ETni2NLh0lIWizHEYV5k4OTSD5vSoQZXs5/ml1Cxz3.iv/m1eJ9zq",
                     SecurityLevel = SecurityLevel.Owner
                 },
                 new GebruikersAccount
                 {
                     Id = 3,
                     Email = "user@user.com",
-                    Wachtwoord = "guest123",
+                    Wachtwoord = "$2a$11$XJbsMCPJ4CAJMT0KD.0yLOlTGnhAn97IP.BLATYzBBdvV7W9LdhU2",
                     SecurityLevel = SecurityLevel.User
                 }
             );
@@ -76,10 +79,7 @@ namespace CRM.API.Models
                     new Land { LandCode = "NL", LandNaam = "Nederland" },
                     new Land { LandCode = "DE", LandNaam = "Duitsland" },
                     new Land { LandCode = "EN", LandNaam = "Engeland" }
-
                 );
         }
-
-
     }
 }

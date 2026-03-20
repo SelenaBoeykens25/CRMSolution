@@ -1,6 +1,7 @@
 ﻿@page "/klanten/aanpassen"
 @page "/klanten/aanpassen/{id:int}"
 @page "/klanten/toevoegen"
+@inherits AuthenticatedPageBase
 @inject NavigationManager navmanager
 <div class="d-flex justify-content-between align-items-center mb-3">
     <button class="btn btn-secondary" @onclick="GaTerug">

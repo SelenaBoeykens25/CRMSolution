@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRM.API.Migrations
 {
     [DbContext(typeof(KlantenDbContext))]
-    [Migration("20260318144508_first")]
+    [Migration("20260320101722_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -145,7 +145,7 @@ namespace CRM.API.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("SecurityLevel")
                         .HasColumnType("int");
@@ -156,32 +156,35 @@ namespace CRM.API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.ToTable("GebruikersAccounts");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            AanmaakDatum = new DateOnly(2026, 3, 18),
+                            AanmaakDatum = new DateOnly(2026, 3, 20),
                             Email = "admin@admin.com",
                             SecurityLevel = 1,
-                            Wachtwoord = "admin123"
+                            Wachtwoord = "$2a$11$iIwo2tifCSV7AZhM2V2p/egBQmGNCzOmzCFXB8Zmx32miYSXm15y6"
                         },
                         new
                         {
                             Id = 2,
-                            AanmaakDatum = new DateOnly(2026, 3, 18),
+                            AanmaakDatum = new DateOnly(2026, 3, 20),
                             Email = "owner@owner.com",
                             SecurityLevel = 2,
-                            Wachtwoord = "owner123"
+                            Wachtwoord = "$2a$11$FGKEQFBarNPb0cWFPTGM1Ox9ksO7ZQk4ZrpvqriYM5C/Kq.3Ps/uq"
                         },
                         new
                         {
                             Id = 3,
-                            AanmaakDatum = new DateOnly(2026, 3, 18),
+                            AanmaakDatum = new DateOnly(2026, 3, 20),
                             Email = "user@user.com",
                             SecurityLevel = 0,
-                            Wachtwoord = "guest123"
+                            Wachtwoord = "$2a$11$Q6G5eiyMSZzYttcrMrYxVe9aJvsFKu3j3N0bp0QCDBQ9bFfJ21Sa2"
                         });
                 });
 
