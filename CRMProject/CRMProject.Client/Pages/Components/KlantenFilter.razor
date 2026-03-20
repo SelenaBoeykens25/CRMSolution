@@ -1,13 +1,26 @@
 @inject NavigationManager NavigationManager
-<EditForm OnSubmit="HandleFilter" Model="filterVariabele" class="d-flex gap-2 align-items-center">
-    <InputText @bind-Value="filterVariabele.filter" class="form-control" autofocus style="width: 400px;" />
-    <InputSelect @bind-Value="filterVariabele.filterOp" class="form-select" style="width: 150px;">
-        <option Value="@("Naam")">Naam</option>
-        <option Value="@("Email")">Email</option>
-        <option Value="@("Telefoon")">Telefoon</option>
-        <option Value="@("Adres")">Adres</option>
-    </InputSelect>
-    <button type="submit" class="btn btn-primary flex-shrink-0"><span class="bi bi-search"></span> Filter</button>
+
+<EditForm OnSubmit="HandleFilter" Model="filterVariabele">
+    <div class="row g-2 align-items-end">
+        <div class="col-12 col-md-6 col-lg-6">
+            <InputText @bind-Value="filterVariabele.filter" class="form-control" autofocus placeholder="Zoek..." />
+        </div>
+        
+        <div class="col-12 col-md-4 col-lg-3">
+            <InputSelect @bind-Value="filterVariabele.filterOp" class="form-select">
+                <option Value="@("Naam")">Naam</option>
+                <option Value="@("Email")">Email</option>
+                <option Value="@("Telefoon")">Telefoon</option>
+                <option Value="@("Adres")">Adres</option>
+            </InputSelect>
+        </div>
+        
+        <div class="col-12 col-md-2 col-lg-3">
+            <button type="submit" class="btn btn-primary w-100">
+                <span class="bi bi-search"></span> Filter
+            </button>
+        </div>
+    </div>
 </EditForm>
 
 @code {

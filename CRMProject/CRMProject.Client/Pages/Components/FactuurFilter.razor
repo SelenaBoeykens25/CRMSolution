@@ -1,70 +1,96 @@
 ﻿@using CRM.Models.Enums
 @inject NavigationManager NavigationManager
-<EditForm OnSubmit="HandleFilter" Model="filterVariabele" class="d-flex gap-2 align-items-center">
-    @if (filterVariabele.filterOp == "Nummer" || filterVariabele.filterOp == "Aantal" || filterVariabele.filterOp == "Prijs")
-    {
-        @if (filterVariabele.filterOp == "Nummer")
+
+<EditForm OnSubmit="HandleFilter" Model="filterVariabele">
+    <div class="row g-2 align-items-end">
+        @if (filterVariabele.filterOp == "Nummer" || filterVariabele.filterOp == "Aantal" || filterVariabele.filterOp == "Prijs")
         {
-            <InputNumber @bind-Value="filterVariabele.filterNummer" class="form-control" style="width: 200px;" placeholder="nummer" />
+            <div class="col-12 col-md-6 col-lg-4">
+                @if (filterVariabele.filterOp == "Nummer")
+                {
+                    <InputNumber @bind-Value="filterVariabele.filterNummer" class="form-control" placeholder="nummer" />
+                }
+                else if (filterVariabele.filterOp == "Prijs")
+                {
+                    <InputNumber @bind-Value="filterVariabele.filterNummer" class="form-control" placeholder="prijs" />
+                }
+                else
+                {
+                    <InputNumber @bind-Value="filterVariabele.filterNummer" class="form-control" placeholder="aantal" />
+                }
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <InputSelect @bind-Value="filterVariabele.vergelijkingsOperator" class="form-select">
+                    <option Value="@("=")">=</option>
+                    <option Value="@(">")">&gt;</option>
+                    <option Value="@("<")">&lt;</option>
+                </InputSelect>
+            </div>
         }
-        else if (filterVariabele.filterOp == "Prijs")
+        else if (filterVariabele.filterOp == "Klant")
+        {   
+            <div class="col-12 col-lg-6">
+                <InputText @bind-Value="filterVariabele.filter" class="form-control" autofocus placeholder="Zoek klant..." />
+            </div>
+        }
+        else if(filterVariabele.filterOp == "Status")
         {
-            <InputNumber @bind-Value="filterVariabele.filterNummer" class="form-control" style="width: 200px;" placeholder="prijs" />
+            <div class="col-12 col-md-6 col-lg-4">
+                <InputSelect @bind-Value="filterVariabele.filterStatus" class="form-select">
+                    @foreach (var statusoptie in Enum.GetValues(typeof(CRM.Models.Enums.BetaalStatus)))
+                    {
+                        <option value="@statusoptie">@statusoptie</option>
+                    }
+                </InputSelect>
+            </div>
         }
         else
         {
-            <InputNumber @bind-Value="filterVariabele.filterNummer" class="form-control" style="width: 200px;" placeholder="aantal" />
-        }
-        <InputSelect @bind-Value="filterVariabele.vergelijkingsOperator" class="form-select" style="width: 200px;">
-            <option Value="@("=")">=</option>
-            <option Value="@(">")">&gt;</option>
-            <option Value="@("<")">&lt;</option>
-        </InputSelect>
-    }
-    else if (filterVariabele.filterOp == "Klant")
-    {   
-        <InputText @bind-Value="filterVariabele.filter" class="form-control" style="width: 400px;" autofocus />
-    }
-    else if(filterVariabele.filterOp == "Status")
-    {
-        <InputSelect @bind-Value="filterVariabele.filterStatus" class="form-select" style="width: 300px;">
-            @foreach (var statusoptie in Enum.GetValues(typeof(CRM.Models.Enums.BetaalStatus)))
-            {
-                <option value="@statusoptie">@statusoptie</option>
+            <div class="col-12 col-md-4 col-lg-3">
+                <InputSelect @bind-Value="filterVariabele.filterDatumSoort" class="form-select">
+                    <option Value="@("Dag")">Dag</option>
+                    <option Value="@("Maand")">Maand</option>
+                    <option Value="@("Jaar")">Jaar</option>
+                </InputSelect>
+            </div>
+            @if(filterVariabele.filterDatumSoort == "Dag")
+            {   
+                <div class="col-12 col-md-8 col-lg-4">
+                    <InputDate @bind-Value="filterVariabele.filterDag" class="form-control"></InputDate>
+                </div>
             }
-        </InputSelect>
-    }
-    else
-    {
-        <InputSelect @bind-Value="filterVariabele.filterDatumSoort" class="form-select">
-            <option Value="@("Dag")">Dag</option>
-            <option Value="@("Maand")">Maand</option>
-            <option Value="@("Jaar")">Jaar</option>
-        </InputSelect>
-        @if(filterVariabele.filterDatumSoort == "Dag")
-        {   
-        <InputDate @bind-Value="filterVariabele.filterDag" class="form-control"></InputDate>
-        }
-        @if (filterVariabele.filterDatumSoort == "Jaar" || filterVariabele.filterDatumSoort == "Maand")
-        {
-            @if(filterVariabele.filterDatumSoort == "Maand")
+            @if (filterVariabele.filterDatumSoort == "Jaar" || filterVariabele.filterDatumSoort == "Maand")
             {
-                <InputNumber placeholder="maand" min="1" max="12" @bind-Value="filterVariabele.filterMaand" class="form-control" style="max-width: 120px;"></InputNumber>
+                @if(filterVariabele.filterDatumSoort == "Maand")
+                {
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <InputNumber placeholder="maand" min="1" max="12" @bind-Value="filterVariabele.filterMaand" class="form-control"></InputNumber>
+                    </div>
+                }
+                <div class="col-6 col-md-4 col-lg-2">
+                    <InputNumber placeholder="jaar" @bind-Value="filterVariabele.filterJaar" class="form-control"></InputNumber>
+                </div>
             }
-
-            <InputNumber placeholder="jaar" @bind-Value="filterVariabele.filterJaar" class="form-control" style="max-width: 120px;"></InputNumber>
         }
-    }
-    <InputSelect @bind-Value="filterVariabele.filterOp" class="form-select" style="width: 150px;">
-        <option Value="@("Nummer")">Nummer</option>
-        <option Value="@("Klant")">Klant</option>
-        <option Value="@("Datum")">Datum</option>
-        <option Value="@("TBV")">Betalen Voor</option>
-        <option Value="@("Aantal")">Aantal Lijnen</option>
-        <option Value="@("Prijs")">Prijs</option>
-        <option Value="@("Status")">Betaalstatus</option>
-    </InputSelect>
-    <button type="submit" class="btn btn-primary flex-shrink-0"><span class="bi bi-search"></span> Filter</button>
+        
+        <div class="col-12 col-md-6 col-lg-3">
+            <InputSelect @bind-Value="filterVariabele.filterOp" class="form-select">
+                <option Value="@("Nummer")">Nummer</option>
+                <option Value="@("Klant")">Klant</option>
+                <option Value="@("Datum")">Datum</option>
+                <option Value="@("TBV")">Betalen Voor</option>
+                <option Value="@("Aantal")">Aantal Lijnen</option>
+                <option Value="@("Prijs")">Prijs</option>
+                <option Value="@("Status")">Betaalstatus</option>
+            </InputSelect>
+        </div>
+        
+        <div class="col-12 col-md-6 col-lg-2">
+            <button type="submit" class="btn btn-primary w-100">
+                <span class="bi bi-search"></span> Filter
+            </button>
+        </div>
+    </div>
 </EditForm>
 
 @code {
