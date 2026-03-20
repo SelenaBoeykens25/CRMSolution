@@ -1,31 +1,67 @@
 ﻿@page "/"
-@inherits AuthenticatedPageBase
+@rendermode InteractiveWebAssembly
 @using CRMProject.Client.Pages.Components
+@using Blazored.SessionStorage
+@inject ISessionStorageService SessionStorage
+@inject NavigationManager NavigationManager
 
 <PageTitle>Home</PageTitle>
 
-<h1>Welkom bij CRM</h1>
+@if (isAuthenticated)
+{
+    <h1>Welkom bij CRM</h1>
 
-<div style="display: flex; gap: 30px; margin: 20px 0; flex-wrap: wrap;">
-    <div style="flex: 1; min-width: 500px;">
+    <div style="display: flex; gap: 30px; margin: 20px 0; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 500px;">
             <h3>Facturen per maand</h3>
-        <FactuurChart />
-    </div>
-    <div style="flex: 0 0 300px;">
-        <div class="text-center">
-        <h3>Facturen per status</h3>
+            <FactuurChart />
         </div>
-        <BetaalStatusOverzicht />
+        <div style="flex: 0 0 300px;">
+            <div class="text-center">
+                <h3>Facturen per status</h3>
+            </div>
+            <BetaalStatusOverzicht />
+        </div>
     </div>
-</div>
 
-<div class="mt-4 mb-4">
-    <div class="d-flex gap-3 justify-content-center">
-        <a href="klanten" class="btn btn-primary btn-lg">
-            <span class="bi bi-people me-2"></span> Klanten
-        </a>
-        <a href="facturen" class="btn btn-success btn-lg">
-            <span class="bi bi-file-earmark-text me-2"></span> Facturen
-        </a>
+    <div class="mt-4 mb-4">
+        <div class="d-flex gap-3 justify-content-center">
+            <a href="klanten" class="btn btn-primary btn-lg">
+                <span class="bi bi-people me-2"></span> Klanten
+            </a>
+            <a href="facturen" class="btn btn-success btn-lg">
+                <span class="bi bi-file-earmark-text me-2"></span> Facturen
+            </a>
+        </div>
     </div>
-</div>
+}
+else if (hasChecked)
+{
+    <div class="alert alert-warning mt-4">
+        <h4>Niet ingelogd</h4>
+        <p>U moet ingelogd zijn om deze pagina te bekijken.</p>
+        <a href="/login" class="btn btn-primary">Naar inlogpagina</a>
+    </div>
+}
+
+@code {
+    private bool isAuthenticated = false;
+    private bool hasChecked = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var loggedInEmail = await SessionStorage.GetItemAsync<string>("loggedInEmail");
+            isAuthenticated = !string.IsNullOrEmpty(loggedInEmail);
+            hasChecked = true;
+            
+            if (!isAuthenticated)
+            {
+                NavigationManager.NavigateTo("/login");
+            }
+            
+            StateHasChanged();
+        }
+    }
+}
