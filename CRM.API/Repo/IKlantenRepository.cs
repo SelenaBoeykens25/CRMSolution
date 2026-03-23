@@ -5,7 +5,6 @@ namespace CRM.API.Repo
     {
         Task<IEnumerable<Klant>> GetKlantenAsync();
         Task<Klant?> GetKlantAsync(int id);
-        Task<Klant?> GetKlantAsync(string naam);
         Task<Klant> AddKlantAsync(Klant klant);
         Task<Klant> UpdateKlantAsync(Klant klant);
         Task<Klant> DeleteKlant(int KlantId);

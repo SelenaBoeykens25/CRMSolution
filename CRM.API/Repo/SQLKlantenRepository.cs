@@ -24,12 +24,6 @@ namespace CRM.API.Repo
                 .FirstOrDefaultAsync(klant => klant.Id == id);
         }
 
-        public async Task<Klant?> GetKlantAsync(string naam)
-        {
-            return await _context.Klanten
-                .FirstOrDefaultAsync(c => c.Naam.ToLower() == naam.ToLower());
-        }
-
         public async Task<Klant> AddKlantAsync(Klant klant)
         {
             if (klant.Adres != null)

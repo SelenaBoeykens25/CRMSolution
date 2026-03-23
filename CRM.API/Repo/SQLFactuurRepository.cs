@@ -65,37 +65,6 @@ namespace CRM.API.Repo
             return null;
         }
 
-        public async Task<FactuurLijn?> GetFactuurLijnAsync(int id)
-        {
-            return await _context.FactuurLijnen.FindAsync(id);
-        }
-
-        public async Task<IEnumerable<FactuurLijn>> GetFactuurLijnenVanAsync(int id)
-        {
-            return await _context.FactuurLijnen.Where(fl => fl.FactuurId == id)
-                .ToListAsync();
-        }
-
-        public async Task<FactuurLijn> AddFactuurLijnAsync(FactuurLijn factuurLijn)
-        {
-            var result = await _context.FactuurLijnen.AddAsync(factuurLijn);
-            await _context.SaveChangesAsync();
-            return result.Entity;
-        }
-
-        public async Task<FactuurLijn> DeleteFactuurLijn(int id)
-        {
-            var result = await _context.FactuurLijnen
-                .FirstOrDefaultAsync(fl => fl.Id == id);
-            if (result != null)
-            {
-                _context.FactuurLijnen.Remove(result);
-                await _context.SaveChangesAsync();
-                return result;
-            }
-            return null;
-        }
-
         public async Task<Factuur> UpdateFactuurAsync(Factuur factuur)
         {
             var existingFactuur = await _context.Facturen
@@ -138,21 +107,6 @@ namespace CRM.API.Repo
 
             await _context.SaveChangesAsync();
             return existingFactuur;
-        }
-
-        public async Task<FactuurLijn> UpdateFactuurLijnAsync(FactuurLijn factuurLijn)
-        {
-            var result = await _context.FactuurLijnen.FirstOrDefaultAsync(fl => fl.Id == factuurLijn.Id);
-            if (result != null)
-            {
-                _context.Entry(result).CurrentValues.SetValues(factuurLijn);
-            }
-            else
-            {
-                result = await AddFactuurLijnAsync(factuurLijn);
-            }
-            await _context.SaveChangesAsync();
-            return result;
         }
     }
 }
