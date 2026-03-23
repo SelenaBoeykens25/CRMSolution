@@ -64,12 +64,10 @@ namespace CRM.API.Repo
             {
                 _context.Entry(result).CurrentValues.SetValues(klant);
 
-                // Handle address updates
                 if (klant.Adres != null)
                 {
                     if (result.Adres != null)
                     {
-                        // Update existing address
                         result.Adres.Straat = klant.Adres.Straat;
                         result.Adres.HuisNummer = klant.Adres.HuisNummer;
                         result.Adres.BusNummer = klant.Adres.BusNummer;
@@ -80,7 +78,6 @@ namespace CRM.API.Repo
                     }
                     else
                     {
-                        // Add new address
                         result.Adres = klant.Adres;
                         result.Adres.Land = null;
                     }

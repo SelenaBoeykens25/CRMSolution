@@ -9,6 +9,7 @@ namespace CRM.Models
     {
         [Key]
         public string LandCode { get; set; }
+        [Required]
         public string LandNaam { get; set; }
     }
 }

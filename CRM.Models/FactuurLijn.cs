@@ -14,13 +14,13 @@ namespace CRM.Models
         public Factuur? Factuur { get; set; }
         public string Omschrijving { get; set; }
 
-        [Range(0, double.MaxValue, ErrorMessage = "NettoPrijs moet groter dan of gelijk aan 0 zijn.")]
+        [Range(0, double.MaxValue, ErrorMessage = "{0} moet groter dan of gelijk aan 0 zijn.")]
         public decimal NettoPrijs { get; set; }
 
-        [Range(0, 100, ErrorMessage = "BtwPercentage moet tussen 0 en 100 zijn.")]
+        [Range(0, 100, ErrorMessage = "{0} moet tussen 0 en 100 zijn.")]
         public decimal BtwPercentage { get; set; } = 21m;
 
-        [Range(0, double.MaxValue, ErrorMessage = "BrutoPrijs moet groter dan of gelijk aan 0 zijn.")]
+        [Range(0, double.MaxValue, ErrorMessage = "{0} moet groter dan of gelijk aan 0 zijn.")]
         public decimal BrutoPrijs { get; set; }
     }
 }

@@ -143,9 +143,9 @@ namespace CRM.API.Migrations
                 columns: new[] { "Id", "AanmaakDatum", "Email", "SecurityLevel", "Wachtwoord" },
                 values: new object[,]
                 {
-                    { 1, new DateOnly(2026, 3, 20), "admin@admin.com", 1, "$2a$11$iIwo2tifCSV7AZhM2V2p/egBQmGNCzOmzCFXB8Zmx32miYSXm15y6" },
-                    { 2, new DateOnly(2026, 3, 20), "owner@owner.com", 2, "$2a$11$FGKEQFBarNPb0cWFPTGM1Ox9ksO7ZQk4ZrpvqriYM5C/Kq.3Ps/uq" },
-                    { 3, new DateOnly(2026, 3, 20), "user@user.com", 0, "$2a$11$Q6G5eiyMSZzYttcrMrYxVe9aJvsFKu3j3N0bp0QCDBQ9bFfJ21Sa2" }
+                    { 1, new DateOnly(2026, 3, 23), "admin@admin.com", 1, "$2a$11$PE6KLR6iBRArcrrmg5Q3I.CeBU6YbTscN/nelbDhmhOchiDmqECaq" },
+                    { 2, new DateOnly(2026, 3, 23), "owner@owner.com", 2, "$2a$11$ETni2NLh0lIWizHEYV5k4OTSD5vSoQZXs5/ml1Cxz3.iv/m1eJ9zq" },
+                    { 3, new DateOnly(2026, 3, 23), "user@user.com", 0, "$2a$11$XJbsMCPJ4CAJMT0KD.0yLOlTGnhAn97IP.BLATYzBBdvV7W9LdhU2" }
                 });
 
             migrationBuilder.InsertData(
