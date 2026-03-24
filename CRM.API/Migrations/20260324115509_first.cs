@@ -52,7 +52,7 @@ namespace CRM.API.Migrations
                     BusNummer = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Postcode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Stad = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Gemeente = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Provincie = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LandCode = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -74,7 +74,7 @@ namespace CRM.API.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Voornaam = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Naam = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Aanspreking = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Aanspreking = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TelefoonNummer = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EmailAdres = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     GeboorteDatum = table.Column<DateOnly>(type: "date", nullable: false),
@@ -143,9 +143,9 @@ namespace CRM.API.Migrations
                 columns: new[] { "Id", "AanmaakDatum", "Email", "SecurityLevel", "Wachtwoord" },
                 values: new object[,]
                 {
-                    { 1, new DateOnly(2026, 3, 23), "admin@admin.com", 1, "$2a$11$PE6KLR6iBRArcrrmg5Q3I.CeBU6YbTscN/nelbDhmhOchiDmqECaq" },
-                    { 2, new DateOnly(2026, 3, 23), "owner@owner.com", 2, "$2a$11$ETni2NLh0lIWizHEYV5k4OTSD5vSoQZXs5/ml1Cxz3.iv/m1eJ9zq" },
-                    { 3, new DateOnly(2026, 3, 23), "user@user.com", 0, "$2a$11$XJbsMCPJ4CAJMT0KD.0yLOlTGnhAn97IP.BLATYzBBdvV7W9LdhU2" }
+                    { 1, new DateOnly(2026, 3, 24), "admin@admin.com", 1, "$2a$11$PE6KLR6iBRArcrrmg5Q3I.CeBU6YbTscN/nelbDhmhOchiDmqECaq" },
+                    { 2, new DateOnly(2026, 3, 24), "owner@owner.com", 2, "$2a$11$ETni2NLh0lIWizHEYV5k4OTSD5vSoQZXs5/ml1Cxz3.iv/m1eJ9zq" },
+                    { 3, new DateOnly(2026, 3, 24), "user@user.com", 0, "$2a$11$XJbsMCPJ4CAJMT0KD.0yLOlTGnhAn97IP.BLATYzBBdvV7W9LdhU2" }
                 });
 
             migrationBuilder.InsertData(

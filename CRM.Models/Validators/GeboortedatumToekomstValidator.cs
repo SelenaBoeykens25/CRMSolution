@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CRM.Models.Validators
 {
-    public class GeboortedatumValidator : ValidationAttribute
+    public class GeboortedatumToekomstValidator : ValidationAttribute
     {
         public override bool IsValid(object? value)
         {

@@ -26,6 +26,19 @@ namespace CRMProject.Client.Services
             }
         }
 
+        public async Task<List<BTWPercentage>> GetPercentagesAsync()
+        {
+            var response = await httpClient.GetAsync("Factuur/percentages");
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.OK:
+                    return await
+                        response.Content.ReadFromJsonAsync<List<BTWPercentage>>();
+                default:
+                    return null;
+            }
+        }
+
         public async Task<Factuur?> GetFactuurAsync(int id)
         {
             var response = await httpClient.GetAsync($"Factuur/{id}");

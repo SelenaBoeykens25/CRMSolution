@@ -14,7 +14,7 @@
 
             <div class="form-group">
                 <label for="email">Email</label>
-                <InputText id="email" @bind-Value="account.Email" class="form-control" placeholder="voorbeeld@email.com" />
+                <InputText autofocus id="email" @bind-Value="account.Email" class="form-control" placeholder="voorbeeld@email.com" />
                 <ValidationMessage For="@(() => account.Email)" />
             </div>
 

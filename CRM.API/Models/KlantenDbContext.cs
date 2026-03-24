@@ -16,6 +16,7 @@ namespace CRM.API.Models
         public DbSet<Land> Landen { get; set; }
         public DbSet<Factuur> Facturen { get; set; }
         public DbSet<FactuurLijn> FactuurLijnen { get; set; }
+        public DbSet<BTWPercentage> BTWPercentages { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -48,7 +49,7 @@ namespace CRM.API.Models
                 .HasForeignKey(a => a.FactuurId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Static pre-computed BCrypt hashes - NO dynamic calls!
+            //heefd voorcomputeerde hashes, anders veranderen ze steeds
             modelBuilder.Entity<GebruikersAccount>().HasData(
                 new GebruikersAccount
                 {
@@ -80,6 +81,12 @@ namespace CRM.API.Models
                     new Land { LandCode = "DE", LandNaam = "Duitsland" },
                     new Land { LandCode = "EN", LandNaam = "Engeland" }
                 );
+            modelBuilder.Entity<BTWPercentage>().HasData(
+                new BTWPercentage { Id = 1, Percentage = 21 },
+                new BTWPercentage { Id = 2, Percentage = 12 },
+                new BTWPercentage { Id = 3, Percentage = 6 }
+                );
+
         }
     }
 }

@@ -10,5 +10,6 @@ namespace CRM.API.Repo
         Task<Factuur> AddFactuurAsync(Factuur factuur);
         Task<Factuur> DeleteFactuurAsync(int id);
         Task<Factuur> UpdateFactuurAsync(Factuur factuur);
+        Task<IEnumerable<BTWPercentage>> GetPercentagesAsync();
     }
 }

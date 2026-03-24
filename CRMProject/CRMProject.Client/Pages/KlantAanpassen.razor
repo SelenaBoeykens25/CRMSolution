@@ -31,7 +31,7 @@
                         Aanspreking
                     </label>
                     <div class="col-sm-8">
-                        <InputSelect @bind-Value="@Klant.Aanspreking" id="aanspreking">
+                        <InputSelect @bind-Value="@Klant.Aanspreking" id="aanspreking" @ref="aansprekingselect">
                             <option value="">- Selecteer aanspreking -</option>
                             <option value="dhr.">dhr.</option>
                             <option value="mevr.">mevr.</option>
@@ -45,7 +45,7 @@
                         Voornaam
                     </label>
                     <div class="col-sm-8">
-                        <InputText id="voornaam" class="form-control" autofocus
+                        <InputText id="voornaam" class="form-control"
                                    @bind-Value="Klant.Voornaam" />
                     </div>
                 </div>
@@ -148,11 +148,11 @@
 
                     <div class="row my-3">
                         <label for="gemeente" class="col-sm-4 col-form-label">
-                            Gemeente
+                            Provincie
                         </label>
                         <div class="col-sm-8">
                             <InputText id="gemeente" class="form-control"
-                                       @bind-Value="Klant.Adres.Gemeente" />
+                                       @bind-Value="Klant.Adres.Provincie" />
                         </div>
                     </div>
 
@@ -225,6 +225,8 @@
     public LandService _landService { get; set; }
     [Parameter]
     public int Id { get; set; }
+
+    private InputSelect<string> aansprekingselect { get; set; }
     private void GaTerug()
     {
         navmanager.NavigateTo("/klanten");
@@ -283,5 +285,13 @@
     {
         this.Klant.Adres.Land = new Land();
         nieuwLand = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (aansprekingselect?.Element != null)
+        {
+            await aansprekingselect.Element.Value.FocusAsync();
+        }
     }
 }

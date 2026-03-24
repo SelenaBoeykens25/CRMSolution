@@ -3,6 +3,7 @@
 @page "/facturen/aanpassen/{id:int}"
 @inherits AuthenticatedPageBase
 @inject NavigationManager navmanager
+@inject IJSRuntime JSRuntime
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <button class="btn btn-secondary" @onclick="GaTerug">
@@ -37,7 +38,9 @@
                                @onfocus="ShowDropdown"
                                @onblur="HideDropdownDelayed"
                                placeholder=@(string.IsNullOrEmpty(SelectedKlantNaam) ? "Selecteer Klant.." : $"{SelectedKlantNaam}")
-                               autocomplete="off" />
+                               autocomplete="off" 
+                               autofocus
+                               />
                         @if (showDropdown && GefilterdeKlanten.Any())
                         {
                             <div class="dropdown-list">
@@ -54,15 +57,13 @@
             </div>
         </div>
 
-
-
         <div class="row my-3">
             <label for="beschrijving" class="col-sm-4 col-form-label">
                 Beschrijving
             </label>
             <div class="col-sm-8">
                 <InputText id="beschrijving" class="form-control"
-                           @bind-Value="factuur.Beschrijving" />
+                           @bind-Value="factuur.Beschrijving" @ref="beschrijvingInput"/>
             </div>
         </div>
         <div class="row my-3">
@@ -134,11 +135,15 @@
                                              @onblur="@(() => OnNettoPrijsChanged(lijn))" />
                             </td>
                             <td>
-                                <InputNumber @bind-Value="lijn.BtwPercentage" @oninput="@(() => OnBTWChanged(lijn))"
-                                             @onblur="@(() => OnBTWChanged(lijn))" />
+                                <InputSelect @bind-Value="lijn.BtwPercentage" @bind-Value:after="@(() => OnBTWChanged(lijn))">
+                                    @foreach (BTWPercentage percentage in BTWPercentages)
+                                    {
+                                        <option value="@percentage.Percentage">@percentage.Percentage.ToString("0")%</option>
+                                    }
+                                </InputSelect>
                             </td>
                             <td>
-                                <InputNumber @bind-Value="lijn.BrutoPrijs" @oninput="@(() => OnBrutoPrijsChanged(lijn))"
+                                <InputNumber disabled @bind-Value="lijn.BrutoPrijs" @oninput="@(() => OnBrutoPrijsChanged(lijn))"
                                     @onblur="@(() => OnBrutoPrijsChanged(lijn))" />
                             </td>
                             <td>
@@ -174,9 +179,9 @@
     private FactuurLijn? FactuurLijn = null;
     public List<Klant> MogelijkeKlanten { get; set; }
     public List<Klant> GefilterdeKlanten { get; set; }
+    public List<BTWPercentage> BTWPercentages { get; set; }
     private bool showDropdown = false;
     private string SelectedKlantNaam = "";
-
     private string _dropdownFilter = "";
     public string DropdownFilter
     {
@@ -187,6 +192,8 @@
             FilterKlanten();
         }
     }
+
+    private InputText beschrijvingInput { get; set; }
 
     public void FilterKlanten()
     {
@@ -249,6 +256,7 @@
 
         MogelijkeKlanten = await _klantenService.GetKlantenAsync();
         GefilterdeKlanten = MogelijkeKlanten;
+        BTWPercentages = await _factuurService.GetPercentagesAsync();
     }
 
     private async Task UpdateFactuur()
@@ -272,7 +280,9 @@
     {
         if (factuur.FactuurLijnen != null)
         {
-            factuur.FactuurLijnen.Add(new FactuurLijn());
+            FactuurLijn nieuweLijn = new FactuurLijn();
+            nieuweLijn.BtwPercentage = BTWPercentages.FirstOrDefault().Percentage;
+            factuur.FactuurLijnen.Add(nieuweLijn);
         }
     }
     public void GaTerug()
@@ -311,4 +321,5 @@
         ZetTotaalPrijs();
     }
 
+    private ElementReference klantInput;
 }

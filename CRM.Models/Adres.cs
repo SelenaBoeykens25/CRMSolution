@@ -18,7 +18,7 @@ namespace CRM.Models
         public string Postcode { get; set; } = string.Empty;
         [Required(ErrorMessage = "{0} is verplicht!")]
         public string Stad { get; set; } = string.Empty;
-        public string? Gemeente { get; set; }
+        public string? Provincie { get; set; }
 
         [ForeignKey(nameof(LandCode))]
         public Land? Land { get; set; }

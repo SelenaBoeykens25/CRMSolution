@@ -4,6 +4,7 @@
 @using CRM.Models.Enums
 @using CRMProject.Client.Services
 @using Blazored.SessionStorage
+@using System.ComponentModel.DataAnnotations
 @inject AccountService accountService
 @inject NavigationManager NavigationManager
 @inject ISessionStorageService SessionStorage
@@ -11,33 +12,39 @@
 <div class="container mt-4">
     <h3>Nieuw Account</h3>
     
-    <EditForm Model="@newAccount" OnValidSubmit="@HandleSubmit">
+    <EditForm Model="@nieuwAccount" OnValidSubmit="@HandleSubmit">
         <DataAnnotationsValidator />
         
         <div class="form-group mb-3">
-            <label for="email">Email</label>
-            <InputText id="email" @bind-Value="newAccount.Email" class="form-control" />
-            <ValidationMessage For="@(() => newAccount.Email)" />
+            <label for="newmail">Email</label>
+            <InputText autofocus id="nieuw-email" autocomplete="username" @bind-Value="nieuwAccount.Email" class="form-control" type="email"/>
+            <ValidationMessage For="@(() => nieuwAccount.Email)" />
         </div>
 
         <div class="form-group mb-3">
-            <label for="wachtwoord">Wachtwoord</label>
-            <InputText id="wachtwoord" type="password" @bind-Value="newAccount.Wachtwoord" class="form-control" />
-            <ValidationMessage For="@(() => newAccount.Wachtwoord)" />
+            <label for="nieuw-wachtwoord">Wachtwoord</label>
+            <InputText id="nieuw-wachtwoord" autocomplete="new-password" type="password" @bind-Value="nieuwAccount.Wachtwoord" class="form-control" />
+            <ValidationMessage For="@(() => nieuwAccount.Wachtwoord)" />
         </div>
+        <div class="form-group mb-3">
+            <label for="herhaal-wachtwoord">Herhaal Wachtwoord</label>
+            <InputText id="herhaal-wachtwoord" autocomplete="new-password" type="password" @bind-Value="nieuwAccount.HerhaaldWachtwoord" class="form-control" />
+            <ValidationMessage For="@(() => nieuwAccount.HerhaaldWachtwoord)" />
+        </div>
+
 
         @if (isOwner)
         {
             <div class="form-group mb-3">
                 <label for="securityLevel">SecurityLevel</label>
-                <InputSelect id="securityLevel" @bind-Value="newAccount.SecurityLevel" class="form-control">
+                <InputSelect id="securityLevel" @bind-Value="nieuwAccount.SecurityLevel" class="form-control">
                     <option value="">-- Selecteer SecurityLevel --</option>
                     @foreach (var level in Enum.GetValues<SecurityLevel>())
                     {
                         <option value="@level">@level</option>
                     }
                 </InputSelect>
-                <ValidationMessage For="@(() => newAccount.SecurityLevel)" />
+                <ValidationMessage For="@(() => nieuwAccount.SecurityLevel)" />
             </div>
         }
 
@@ -52,10 +59,25 @@
 </div>
 
 @code {
-    private GebruikersAccount newAccount = new();
+    private AccountViewModel nieuwAccount = new AccountViewModel();
     private string errorMessage = string.Empty;
     private bool isLoading = false;
     private bool isOwner = false;
+
+    public class AccountViewModel
+    {
+        [DataType(DataType.EmailAddress)]
+        [Required(ErrorMessage = "{0} is een verplicht veld!")]
+        public string Email { get; set; } = "";
+        [DataType(DataType.Password)]
+        [Required(ErrorMessage = "{0} is een verplicht veld!")]
+        public string Wachtwoord { get; set; } = "";
+        [DataType(DataType.Password)]
+        [Required(ErrorMessage = "{0} is een verplicht veld!")]
+        public string HerhaaldWachtwoord { get; set; } = "";
+        public SecurityLevel SecurityLevel { get; set; } = SecurityLevel.User;
+    }
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -74,18 +96,32 @@
 
         try
         {
-            var exists = await accountService.BestaatAlAsync(newAccount.Email);
-            if (exists)
+            var bestaatAl = await accountService.BestaatAlAsync(nieuwAccount.Email);
+            if (bestaatAl)
             {
                 errorMessage = "Dit email adres bestaat al.";
                 isLoading = false;
                 return;
             }
+            if(nieuwAccount.Wachtwoord != nieuwAccount.HerhaaldWachtwoord)
+            {
+                errorMessage = "Wachtwoorden komen niet overeen.";
+                isLoading = false;
+                return;
+            }
 
-            var result = await accountService.AddAccountAsync(newAccount);
+            GebruikersAccount account = new GebruikersAccount
+                {
+                    Email = nieuwAccount.Email,
+                    Wachtwoord = nieuwAccount.Wachtwoord,
+                    SecurityLevel = nieuwAccount.SecurityLevel
+                };
+
+
+            var result = await accountService.AddAccountAsync(account);
             if (result != null)
             {
-                NavigationManager.NavigateTo("/");
+                NavigationManager.NavigateTo($"nieuwaccount/{account.Email}");
             }
             else
             {

@@ -12,6 +12,7 @@ namespace CRM.Models
         public int FactuurId { get; set; }
         [ForeignKey(nameof(FactuurId))]
         public Factuur? Factuur { get; set; }
+        [Required(ErrorMessage ="{0} is een verplicht veld!")]
         public string Omschrijving { get; set; }
 
         [Range(0, double.MaxValue, ErrorMessage = "{0} moet groter dan of gelijk aan 0 zijn.")]

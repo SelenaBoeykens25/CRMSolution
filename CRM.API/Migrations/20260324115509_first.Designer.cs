@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRM.API.Migrations
 {
     [DbContext(typeof(KlantenDbContext))]
-    [Migration("20260323072509_first")]
+    [Migration("20260324115509_first")]
     partial class first
     {
         /// <inheritdoc />
@@ -36,9 +36,6 @@ namespace CRM.API.Migrations
                     b.Property<string>("BusNummer")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Gemeente")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("HuisNummer")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -49,6 +46,9 @@ namespace CRM.API.Migrations
 
                     b.Property<string>("Postcode")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Provincie")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Stad")
@@ -165,7 +165,7 @@ namespace CRM.API.Migrations
                         new
                         {
                             Id = 1,
-                            AanmaakDatum = new DateOnly(2026, 3, 23),
+                            AanmaakDatum = new DateOnly(2026, 3, 24),
                             Email = "admin@admin.com",
                             SecurityLevel = 1,
                             Wachtwoord = "$2a$11$PE6KLR6iBRArcrrmg5Q3I.CeBU6YbTscN/nelbDhmhOchiDmqECaq"
@@ -173,7 +173,7 @@ namespace CRM.API.Migrations
                         new
                         {
                             Id = 2,
-                            AanmaakDatum = new DateOnly(2026, 3, 23),
+                            AanmaakDatum = new DateOnly(2026, 3, 24),
                             Email = "owner@owner.com",
                             SecurityLevel = 2,
                             Wachtwoord = "$2a$11$ETni2NLh0lIWizHEYV5k4OTSD5vSoQZXs5/ml1Cxz3.iv/m1eJ9zq"
@@ -181,7 +181,7 @@ namespace CRM.API.Migrations
                         new
                         {
                             Id = 3,
-                            AanmaakDatum = new DateOnly(2026, 3, 23),
+                            AanmaakDatum = new DateOnly(2026, 3, 24),
                             Email = "user@user.com",
                             SecurityLevel = 0,
                             Wachtwoord = "$2a$11$XJbsMCPJ4CAJMT0KD.0yLOlTGnhAn97IP.BLATYzBBdvV7W9LdhU2"
@@ -197,7 +197,6 @@ namespace CRM.API.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Aanspreking")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("AdresId")

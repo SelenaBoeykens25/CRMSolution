@@ -13,7 +13,7 @@ namespace CRM.Models
         public string Voornaam { get; set; }
         [Required(ErrorMessage = "{0} is een verplicht veld!")]
         public string Naam { get; set; }
-        public string Aanspreking { get; set; }
+        public string? Aanspreking { get; set; } = "";
         
         [Required(ErrorMessage = "{0} is een verplicht veld")]
         [DataType(DataType.PhoneNumber)]
@@ -22,8 +22,10 @@ namespace CRM.Models
         [DataType(DataType.EmailAddress)]
         public string EmailAdres { get; set; }
         [Required(ErrorMessage = "{0} is een verplicht veld")]
-        [GeboortedatumValidator(ErrorMessage = "{0} moet in het verleden liggen")]
-        public DateOnly GeboorteDatum { get; set; }
+        [GeboortedatumToekomstValidator(ErrorMessage = "{0} moet in het verleden liggen")]
+        [GeboortedatumVerledenValidator(ErrorMessage = "{0} moet minder dan 150 jaar in het verleden liggen")]
+        [DataType(DataType.DateTime,ErrorMessage ="{0} moet een datum zijn!")]
+        public DateOnly GeboorteDatum { get; set; } = DateOnly.FromDateTime(DateTime.Today);
         [ForeignKey(nameof(AdresId))]
         public Adres? Adres { get; set; }
         public int? AdresId { get; set; }

@@ -67,7 +67,7 @@ namespace CRM.API.Repo
                         result.Adres.BusNummer = klant.Adres.BusNummer;
                         result.Adres.Postcode = klant.Adres.Postcode;
                         result.Adres.Stad = klant.Adres.Stad;
-                        result.Adres.Gemeente = klant.Adres.Gemeente;
+                        result.Adres.Provincie = klant.Adres.Provincie;
                         result.Adres.LandCode = klant.Adres.LandCode;
                     }
                     else

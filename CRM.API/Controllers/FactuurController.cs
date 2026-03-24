@@ -42,6 +42,21 @@ namespace CRM.API.Controllers
                     "Database error");
             }
         }
+
+        [HttpGet("percentages")]
+        public async Task<IActionResult> GetPercentages()
+        {
+            try
+            {
+                return Ok(await _repository.GetPercentagesAsync());
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    "Database error");
+            }
+        }
+
         [HttpGet("van/{klantId:int}")]
         public async Task<IActionResult> GetFacturenVan(int klantId)
         {
@@ -112,5 +127,7 @@ namespace CRM.API.Controllers
                     "Error deleting data");
             }
         }
+
+        
     }
 }

@@ -53,7 +53,12 @@ namespace CRMProject.Client.Services
             if (message.IsSuccessStatusCode)
                 return klant;
             else
+            {
+                var errorContent = await message.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error adding Klant: {message.StatusCode}");
+                Console.WriteLine($"Error details: {errorContent}");
                 return null;
+        }
         }
 
         public async Task DeleteKlant(int id)

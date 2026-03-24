@@ -108,5 +108,10 @@ namespace CRM.API.Repo
             await _context.SaveChangesAsync();
             return existingFactuur;
         }
+
+        public async Task<IEnumerable<BTWPercentage>> GetPercentagesAsync()
+        {
+            return await _context.BTWPercentages.ToListAsync();
+        }
     }
 }
