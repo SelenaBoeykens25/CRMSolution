@@ -281,7 +281,7 @@
         if (factuur.FactuurLijnen != null)
         {
             FactuurLijn nieuweLijn = new FactuurLijn();
-            nieuweLijn.BtwPercentage = BTWPercentages.FirstOrDefault().Percentage;
+            nieuweLijn.BtwPercentage = BTWPercentages.LastOrDefault().Percentage;
             factuur.FactuurLijnen.Add(nieuweLijn);
         }
     }

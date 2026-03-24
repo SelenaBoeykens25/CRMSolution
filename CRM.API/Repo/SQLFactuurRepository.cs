@@ -58,6 +58,7 @@ namespace CRM.API.Repo
                 .FirstOrDefaultAsync(factuur => factuur.Id == id);
             if (result != null)
             {
+                _context.FactuurLijnen.RemoveRange(result.FactuurLijnen);
                 _context.Facturen.Remove(result);
                 await _context.SaveChangesAsync();
                 return result;

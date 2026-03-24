@@ -82,9 +82,9 @@ namespace CRM.API.Models
                     new Land { LandCode = "EN", LandNaam = "Engeland" }
                 );
             modelBuilder.Entity<BTWPercentage>().HasData(
-                new BTWPercentage { Id = 1, Percentage = 21 },
+                new BTWPercentage { Id = 1, Percentage = 6 },
                 new BTWPercentage { Id = 2, Percentage = 12 },
-                new BTWPercentage { Id = 3, Percentage = 6 }
+                new BTWPercentage { Id = 3, Percentage = 21 }
                 );
 
         }

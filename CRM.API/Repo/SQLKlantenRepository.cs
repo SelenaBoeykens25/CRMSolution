@@ -91,9 +91,28 @@ namespace CRM.API.Repo
         public async Task<Klant> DeleteKlant(int KlantId)
         {
             var result = await _context.Klanten
+                .Include(k => k.Facturen).ThenInclude(f => f.FactuurLijnen)
+                .Include(k => k.Adres)
                 .FirstOrDefaultAsync(c => c.Id == KlantId);
             if (result != null)
             {
+                if (result.Facturen != null && result.Facturen.Any())
+                {
+                    foreach (var factuur in result.Facturen)
+                    {
+                        if (factuur.FactuurLijnen != null)
+                        {
+                            _context.FactuurLijnen.RemoveRange(factuur.FactuurLijnen);
+                        }
+                    }
+                    _context.Facturen.RemoveRange(result.Facturen);
+                }
+
+                if (result.Adres != null)
+                {
+                    _context.Adressen.Remove(result.Adres);
+                }
+
                 _context.Klanten.Remove(result);
                 await _context.SaveChangesAsync();
                 return result;
