@@ -30,7 +30,23 @@ namespace CRM.API.Models
                 .Property(f => f.Prijs)
                 .HasPrecision(18, 2);
 
-            
+            modelBuilder.Entity<BTWPercentage>()
+                .Property(b => b.Percentage)
+                .HasPrecision(5, 2);
+
+            modelBuilder.Entity<FactuurLijn>()
+                .Property(f => f.BrutoPrijs)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<FactuurLijn>()
+                .Property(f => f.BtwPercentage)
+                .HasPrecision(5, 2);
+
+            modelBuilder.Entity<FactuurLijn>()
+                .Property(f => f.NettoPrijs)
+                .HasPrecision(18, 2);
+
+
             modelBuilder.Entity<Klant>()
                 .HasOne(k => k.Adres)
                 .WithMany()
@@ -69,7 +85,7 @@ namespace CRM.API.Models
                 {
                     Id = 3,
                     Email = "user@user.com",
-                    Wachtwoord = "$2a$11$XJbsMCPJ4CAJMT0KD.0yLOlTGnhAn97IP.BLATYzBBdvV7W9LdhU2",
+                    Wachtwoord = "$2a$11$hO0heENjo4YZyHoPafKnzOP4sCXhAqDKmF4WBUtCSXizMM.UW96/m",
                     SecurityLevel = SecurityLevel.User
                 }
             );

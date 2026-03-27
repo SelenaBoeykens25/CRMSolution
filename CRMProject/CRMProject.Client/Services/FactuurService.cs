@@ -53,27 +53,50 @@ namespace CRMProject.Client.Services
         }
         public async Task<Factuur?> UpdateFactuur(Factuur factuur)
         {
-            HttpResponseMessage message = await httpClient.PutAsJsonAsync<Factuur>(
-            $"factuur/{factuur.Id}", factuur);
-            if (message.IsSuccessStatusCode)
-                return factuur;
-            else
+            try
+            {
+                HttpResponseMessage message = await httpClient.PutAsJsonAsync<Factuur>(
+                $"factuur/{factuur.Id}", factuur);
+                if (message.IsSuccessStatusCode)
+                    return factuur;
+                else
+                    return null;
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Network error updating Factuur: {ex.Message}");
                 return null;
+            }
         }
 
         public async Task<Factuur?> AddFactuur(Factuur factuur)
         {
-            HttpResponseMessage message = await httpClient.PostAsJsonAsync<Factuur>(
-            $"factuur", factuur);
-            if (message.IsSuccessStatusCode)
-                return await message.Content.ReadFromJsonAsync<Factuur>();
-            else
+            try
+            {
+                HttpResponseMessage message = await httpClient.PostAsJsonAsync<Factuur>(
+                $"factuur", factuur);
+                if (message.IsSuccessStatusCode)
+                    return await message.Content.ReadFromJsonAsync<Factuur>();
+                else
+                    return null;
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Network error adding Factuur: {ex.Message}");
                 return null;
+            }
         }
 
         public async Task DeleteFactuur(int id)
         {
-            await httpClient.DeleteAsync($"factuur/{id}");
+            try
+            {
+                await httpClient.DeleteAsync($"factuur/{id}");
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Network error deleting Factuur: {ex.Message}");
+            }
         }
     }
 }

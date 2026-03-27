@@ -14,28 +14,49 @@ builder.Services.AddControllers()
     });
 builder.Services.AddCors();
 builder.Services.AddDbContext<KlantenDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("KlantenConnection")));
+    builder.Configuration.GetConnectionString("KlantenConnection"),
+    sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(
+        maxRetryCount: 5,
+        maxRetryDelay: TimeSpan.FromSeconds(30),
+        errorNumbersToAdd: null)));
 builder.Services.AddScoped<IKlantenRepository, SQLKlantenRepository>();
 builder.Services.AddScoped<IFactuurRepository, SQLFactuurRepository>();
 builder.Services.AddScoped<ILandRepository, SQLLandRepository>();
 builder.Services.AddScoped<IAccountRepository, SQLAccountRepository>();
 
-
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// Configure CORS before other middleware
+app.UseCors(builder =>
 {
-    app.MapOpenApi();
-    app.MapScalarApiReference();
+    if (app.Environment.IsDevelopment())
+    {
+        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    }
+    else
+    {
+        builder.WithOrigins("http://crmportfolio.runasp.net", "https://crmportfolio.runasp.net")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    }
+});
+
+// Configure the HTTP request pipeline.
+app.MapOpenApi();
+app.MapScalarApiReference();
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
 }
 
-app.UseHttpsRedirection();
-
-app.UseCors(builder =>
-          builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+// Don't redirect HTTP to HTTPS in production when using HTTP-only hosting
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 

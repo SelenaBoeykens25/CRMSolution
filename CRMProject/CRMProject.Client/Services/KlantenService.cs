@@ -38,32 +38,55 @@ namespace CRMProject.Client.Services
         }
         public async Task<Klant?> UpdateKlant(Klant klant)
         {
-            HttpResponseMessage message = await httpClient.PutAsJsonAsync<Klant>(
-            $"klant/{klant.Id}", klant);
-            if (message.IsSuccessStatusCode)
-                return klant;
-            else
+            try
+            {
+                HttpResponseMessage message = await httpClient.PutAsJsonAsync<Klant>(
+                $"klant/{klant.Id}", klant);
+                if (message.IsSuccessStatusCode)
+                    return klant;
+                else
+                    return null;
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Network error updating Klant: {ex.Message}");
                 return null;
+            }
         }
 
         public async Task<Klant?> AddKlant(Klant klant)
         {
-            HttpResponseMessage message = await httpClient.PostAsJsonAsync<Klant>(
-            $"klant", klant);
-            if (message.IsSuccessStatusCode)
-                return klant;
-            else
+            try
             {
-                var errorContent = await message.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error adding Klant: {message.StatusCode}");
-                Console.WriteLine($"Error details: {errorContent}");
+                HttpResponseMessage message = await httpClient.PostAsJsonAsync<Klant>(
+                $"klant", klant);
+                if (message.IsSuccessStatusCode)
+                    return klant;
+                else
+                {
+                    var errorContent = await message.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Error adding Klant: {message.StatusCode}");
+                    Console.WriteLine($"Error details: {errorContent}");
+                    return null;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Network error adding Klant: {ex.Message}");
                 return null;
-        }
+            }
         }
 
         public async Task DeleteKlant(int id)
         {
-            await httpClient.DeleteAsync($"klant/{id}");
+            try
+            {
+                await httpClient.DeleteAsync($"klant/{id}");
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Network error deleting Klant: {ex.Message}");
+            }
         }
     }
 }

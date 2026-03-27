@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRM.API.Migrations
 {
     [DbContext(typeof(KlantenDbContext))]
-    [Migration("20260324115509_first")]
-    partial class first
+    [Migration("20260327115935_second")]
+    partial class second
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,6 +66,40 @@ namespace CRM.API.Migrations
                     b.ToTable("Adressen");
                 });
 
+            modelBuilder.Entity("CRM.Models.BTWPercentage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Percentage")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BTWPercentages");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Percentage = 6m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Percentage = 12m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Percentage = 21m
+                        });
+                });
+
             modelBuilder.Entity("CRM.Models.Factuur", b =>
                 {
                     b.Property<int>("Id")
@@ -110,15 +144,18 @@ namespace CRM.API.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("BrutoPrijs")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("BtwPercentage")
-                        .HasColumnType("decimal(18,2)");
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
 
                     b.Property<int>("FactuurId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("NettoPrijs")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Omschrijving")
@@ -165,7 +202,7 @@ namespace CRM.API.Migrations
                         new
                         {
                             Id = 1,
-                            AanmaakDatum = new DateOnly(2026, 3, 24),
+                            AanmaakDatum = new DateOnly(2026, 3, 27),
                             Email = "admin@admin.com",
                             SecurityLevel = 1,
                             Wachtwoord = "$2a$11$PE6KLR6iBRArcrrmg5Q3I.CeBU6YbTscN/nelbDhmhOchiDmqECaq"
@@ -173,7 +210,7 @@ namespace CRM.API.Migrations
                         new
                         {
                             Id = 2,
-                            AanmaakDatum = new DateOnly(2026, 3, 24),
+                            AanmaakDatum = new DateOnly(2026, 3, 27),
                             Email = "owner@owner.com",
                             SecurityLevel = 2,
                             Wachtwoord = "$2a$11$ETni2NLh0lIWizHEYV5k4OTSD5vSoQZXs5/ml1Cxz3.iv/m1eJ9zq"
@@ -181,7 +218,7 @@ namespace CRM.API.Migrations
                         new
                         {
                             Id = 3,
-                            AanmaakDatum = new DateOnly(2026, 3, 24),
+                            AanmaakDatum = new DateOnly(2026, 3, 27),
                             Email = "user@user.com",
                             SecurityLevel = 0,
                             Wachtwoord = "$2a$11$XJbsMCPJ4CAJMT0KD.0yLOlTGnhAn97IP.BLATYzBBdvV7W9LdhU2"

@@ -34,18 +34,34 @@ namespace CRMProject.Client.Services
 
         public async Task<bool> BestaatAlAsync(string email)
         {
-            var response = await httpClient.GetAsync($"/account/{email}");
-            return response.IsSuccessStatusCode && await response.Content.ReadFromJsonAsync<bool>();
+            try
+            {
+                var response = await httpClient.GetAsync($"/account/{email}");
+                return response.IsSuccessStatusCode && await response.Content.ReadFromJsonAsync<bool>();
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Network error checking account existence: {ex.Message}");
+                return false;
+            }
         }
 
         public async Task<GebruikersAccount?> AddAccountAsync(GebruikersAccount account)
         {
-            var response = await httpClient.PostAsJsonAsync("/account", account);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                return await response.Content.ReadFromJsonAsync<GebruikersAccount>();
+                var response = await httpClient.PostAsJsonAsync("/account", account);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<GebruikersAccount>();
+                }
+                return null;
             }
-            return null;
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Network error adding account: {ex.Message}");
+                return null;
+            }
         }
     }
 }

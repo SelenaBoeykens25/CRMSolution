@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRM.API.Migrations
 {
     [DbContext(typeof(KlantenDbContext))]
-    [Migration("20260324122241_second")]
-    partial class second
+    [Migration("20260327115417_first")]
+    partial class first
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -85,7 +85,7 @@ namespace CRM.API.Migrations
                         new
                         {
                             Id = 1,
-                            Percentage = 21m
+                            Percentage = 6m
                         },
                         new
                         {
@@ -95,7 +95,7 @@ namespace CRM.API.Migrations
                         new
                         {
                             Id = 3,
-                            Percentage = 6m
+                            Percentage = 21m
                         });
                 });
 
@@ -198,7 +198,7 @@ namespace CRM.API.Migrations
                         new
                         {
                             Id = 1,
-                            AanmaakDatum = new DateOnly(2026, 3, 24),
+                            AanmaakDatum = new DateOnly(2026, 3, 27),
                             Email = "admin@admin.com",
                             SecurityLevel = 1,
                             Wachtwoord = "$2a$11$PE6KLR6iBRArcrrmg5Q3I.CeBU6YbTscN/nelbDhmhOchiDmqECaq"
@@ -206,7 +206,7 @@ namespace CRM.API.Migrations
                         new
                         {
                             Id = 2,
-                            AanmaakDatum = new DateOnly(2026, 3, 24),
+                            AanmaakDatum = new DateOnly(2026, 3, 27),
                             Email = "owner@owner.com",
                             SecurityLevel = 2,
                             Wachtwoord = "$2a$11$ETni2NLh0lIWizHEYV5k4OTSD5vSoQZXs5/ml1Cxz3.iv/m1eJ9zq"
@@ -214,7 +214,7 @@ namespace CRM.API.Migrations
                         new
                         {
                             Id = 3,
-                            AanmaakDatum = new DateOnly(2026, 3, 24),
+                            AanmaakDatum = new DateOnly(2026, 3, 27),
                             Email = "user@user.com",
                             SecurityLevel = 0,
                             Wachtwoord = "$2a$11$XJbsMCPJ4CAJMT0KD.0yLOlTGnhAn97IP.BLATYzBBdvV7W9LdhU2"

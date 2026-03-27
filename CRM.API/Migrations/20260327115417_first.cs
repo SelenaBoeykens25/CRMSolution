@@ -14,6 +14,19 @@ namespace CRM.API.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "BTWPercentages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Percentage = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_BTWPercentages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GebruikersAccounts",
                 columns: table => new
                 {
@@ -139,13 +152,23 @@ namespace CRM.API.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "BTWPercentages",
+                columns: new[] { "Id", "Percentage" },
+                values: new object[,]
+                {
+                    { 1, 6m },
+                    { 2, 12m },
+                    { 3, 21m }
+                });
+
+            migrationBuilder.InsertData(
                 table: "GebruikersAccounts",
                 columns: new[] { "Id", "AanmaakDatum", "Email", "SecurityLevel", "Wachtwoord" },
                 values: new object[,]
                 {
-                    { 1, new DateOnly(2026, 3, 24), "admin@admin.com", 1, "$2a$11$PE6KLR6iBRArcrrmg5Q3I.CeBU6YbTscN/nelbDhmhOchiDmqECaq" },
-                    { 2, new DateOnly(2026, 3, 24), "owner@owner.com", 2, "$2a$11$ETni2NLh0lIWizHEYV5k4OTSD5vSoQZXs5/ml1Cxz3.iv/m1eJ9zq" },
-                    { 3, new DateOnly(2026, 3, 24), "user@user.com", 0, "$2a$11$XJbsMCPJ4CAJMT0KD.0yLOlTGnhAn97IP.BLATYzBBdvV7W9LdhU2" }
+                    { 1, new DateOnly(2026, 3, 27), "admin@admin.com", 1, "$2a$11$PE6KLR6iBRArcrrmg5Q3I.CeBU6YbTscN/nelbDhmhOchiDmqECaq" },
+                    { 2, new DateOnly(2026, 3, 27), "owner@owner.com", 2, "$2a$11$ETni2NLh0lIWizHEYV5k4OTSD5vSoQZXs5/ml1Cxz3.iv/m1eJ9zq" },
+                    { 3, new DateOnly(2026, 3, 27), "user@user.com", 0, "$2a$11$XJbsMCPJ4CAJMT0KD.0yLOlTGnhAn97IP.BLATYzBBdvV7W9LdhU2" }
                 });
 
             migrationBuilder.InsertData(
@@ -190,6 +213,9 @@ namespace CRM.API.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "BTWPercentages");
+
             migrationBuilder.DropTable(
                 name: "FactuurLijnen");
 
