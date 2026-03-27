@@ -88,5 +88,10 @@ namespace CRMProject.Client.Services
                 Console.WriteLine($"Network error deleting Klant: {ex.Message}");
             }
         }
+
+        public async Task Reset()
+        {
+            await httpClient.DeleteAsync($"klant/reset");
+        }
     }
 }

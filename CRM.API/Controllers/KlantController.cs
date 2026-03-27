@@ -94,5 +94,11 @@ namespace CRM.API.Controllers
                     "Error deleting data");
             }
         }
+
+        [HttpDelete("reset")]
+        public async Task ResetAlles()
+        {
+            await _repository.Reset();
+        }
     }
 }

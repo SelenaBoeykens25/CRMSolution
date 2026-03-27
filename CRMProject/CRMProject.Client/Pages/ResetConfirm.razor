@@ -1,0 +1,26 @@
+﻿@page "/reset"
+@inherits AuthenticatedPageBase
+@inject NavigationManager navmanager
+<div class="d-flex flex-column justify-content-center align-items-center mt-5">
+    <h1 class="mb-4">Alles Resetten?</h1>
+    <div>
+        <button class="btn btn-danger me-2" @onclick="Reset">Ja</button>
+        <button class="btn btn-secondary" @onclick="Annuleren">Nee</button>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    public KlantenService _klantenService { get; set; }
+
+    private async Task Reset()
+    {
+        await _klantenService.Reset();
+        navmanager.NavigateTo("/");
+    }
+
+    private void Annuleren()
+    {
+        navmanager.NavigateTo("/");
+    }
+}

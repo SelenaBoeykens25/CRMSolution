@@ -119,5 +119,11 @@ namespace CRM.API.Repo
             }
             return null;
         }
+
+        public async Task Reset()
+        {
+            await _context.Database.EnsureDeletedAsync();
+            await _context.Database.EnsureCreatedAsync();
+        }
     }
 }
