@@ -62,4 +62,15 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Test database connection endpoint (for development only)
+if (app.Environment.IsDevelopment())
+{
+    app.MapGet("/test-db-connection", async (IConfiguration config) =>
+    {
+        var connectionString = config.GetConnectionString("KlantenConnection");
+        var result = await CRM.API.TestConnection.TestDatabaseConnectionAsync(connectionString!);
+        return result ? Results.Ok("Database connection successful!") : Results.Problem("Database connection failed!");
+    });
+}
+
 app.Run();

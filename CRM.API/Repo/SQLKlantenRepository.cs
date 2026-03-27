@@ -1,6 +1,7 @@
 ﻿using CRM.Models;
 using CRM.API.Models;
 using Microsoft.EntityFrameworkCore;
+using CRM.Models.Enums;
 namespace CRM.API.Repo
 {
     public class SQLKlantenRepository : IKlantenRepository
@@ -122,8 +123,55 @@ namespace CRM.API.Repo
 
         public async Task Reset()
         {
-            await _context.Database.EnsureDeletedAsync();
-            await _context.Database.EnsureCreatedAsync();
+            _context.FactuurLijnen.RemoveRange(_context.FactuurLijnen);
+            _context.Facturen.RemoveRange(_context.Facturen);
+            _context.Klanten.RemoveRange(_context.Klanten);
+            _context.Adressen.RemoveRange(_context.Adressen);
+            _context.GebruikersAccounts.RemoveRange(_context.GebruikersAccounts);
+            _context.BTWPercentages.RemoveRange(_context.BTWPercentages);
+            _context.Landen.RemoveRange(_context.Landen);
+
+            await _context.SaveChangesAsync();
+
+            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('GebruikersAccounts', RESEED, 0)");
+            await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT ('BTWPercentages', RESEED, 0)");
+
+            _context.GebruikersAccounts.AddRange(
+                new GebruikersAccount
+                {
+                    Email = "admin@admin.com",
+                    Wachtwoord = "$2a$11$PE6KLR6iBRArcrrmg5Q3I.CeBU6YbTscN/nelbDhmhOchiDmqECaq",
+                    SecurityLevel = SecurityLevel.Admin
+                },
+                new GebruikersAccount
+                {
+                    Email = "owner@owner.com",
+                    Wachtwoord = "$2a$11$ETni2NLh0lIWizHEYV5k4OTSD5vSoQZXs5/ml1Cxz3.iv/m1eJ9zq",
+                    SecurityLevel = SecurityLevel.Owner
+                },
+                new GebruikersAccount
+                {
+                    Email = "user@user.com",
+                    Wachtwoord = "$2a$11$hO0heENjo4YZyHoPafKnzOP4sCXhAqDKmF4WBUtCSXizMM.UW96/m",
+                    SecurityLevel = SecurityLevel.User
+                }
+            );
+
+            _context.Landen.AddRange(
+                new Land { LandCode = "BE", LandNaam = "België" },
+                new Land { LandCode = "FR", LandNaam = "Frankrijk" },
+                new Land { LandCode = "NL", LandNaam = "Nederland" },
+                new Land { LandCode = "DE", LandNaam = "Duitsland" },
+                new Land { LandCode = "EN", LandNaam = "Engeland" }
+            );
+
+            _context.BTWPercentages.AddRange(
+                new BTWPercentage { Percentage = 6 },
+                new BTWPercentage { Percentage = 12 },
+                new BTWPercentage { Percentage = 21 }
+            );
+
+            await _context.SaveChangesAsync();
         }
     }
 }

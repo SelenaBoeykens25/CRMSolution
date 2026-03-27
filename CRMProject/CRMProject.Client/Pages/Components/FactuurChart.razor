@@ -1,3 +1,5 @@
+@using Radzen
+@using Radzen.Blazor
 @inject FactuurService factuurService
 
 @if (factuurData == null)
@@ -11,10 +13,12 @@ else if (!factuurData.Any())
 else
 {
     <RadzenChart>
-        <RadzenColumnSeries Data="@factuurData" CategoryProperty="Maand" Title="Aantal facturen" ValueProperty="Aantal" />
-        <RadzenLineSeries Data="@factuurData" CategoryProperty="Maand" Title="Winst (€)" ValueProperty="Winst" LineType="LineType.Solid">
-            <RadzenMarkers MarkerType="MarkerType.Circle" />
-        </RadzenLineSeries>
+        <RadzenColumnSeries Data="@factuurData" CategoryProperty="Maand" Title="Aantal facturen" ValueProperty="Aantal">
+            <RadzenSeriesDataLabels Visible="true" />
+        </RadzenColumnSeries>
+        <RadzenColumnSeries Data="@factuurData" CategoryProperty="Maand" Title="Winst (€)" ValueProperty="Winst">
+            <RadzenSeriesDataLabels Visible="true" />
+        </RadzenColumnSeries>
         <RadzenCategoryAxis Padding="20" />
         <RadzenValueAxis>
             <RadzenGridLines Visible="true" />
