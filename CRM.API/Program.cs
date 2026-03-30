@@ -12,7 +12,19 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy.WithOrigins(
+                "http://crmportfolio.runasp.net", 
+                "https://crmportfolio.runasp.net",
+                "http://crmportfolioangular.runasp.net", 
+                "https://crmportfolioangular.runasp.net")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 builder.Services.AddDbContext<KlantenDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("KlantenConnection"),
     sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(
@@ -29,32 +41,22 @@ builder.Services.AddOpenApi();
 var app = builder.Build();
 
 // Configure CORS before other middleware
-app.UseCors(builder =>
+if (app.Environment.IsDevelopment())
 {
-    if (app.Environment.IsDevelopment())
-    {
-        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
-    }
-    else
-    {
-        builder.WithOrigins("http://crmportfolio.runasp.net", "https://crmportfolio.runasp.net")
-               .AllowAnyHeader()
-               .AllowAnyMethod();
-    }
-});
+    app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+}
+else
+{
+    app.UseCors("Frontend");
+}
 
 // Configure the HTTP request pipeline.
 app.MapOpenApi();
 app.MapScalarApiReference();
 
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHsts();
-}
-
-// Don't redirect HTTP to HTTPS in production when using HTTP-only hosting
 if (app.Environment.IsDevelopment())
 {
+    app.UseHsts();
     app.UseHttpsRedirection();
 }
 
